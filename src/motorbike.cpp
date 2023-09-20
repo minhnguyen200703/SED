@@ -3,13 +3,20 @@
 #include "Member.h" // Include the Member header to access member-related functionality
 
 Motorbike::Motorbike(std::string model, std::string color, double engineSize, std::string transmissionMode,
-                     int yearMade, std::string description, int minimumRenterRating)
+                     int yearMade, std::string description, int minimumRenterRating, int consumingPoint)
     : model(model), color(color), engineSize(engineSize), transmissionMode(transmissionMode),
-      yearMade(yearMade), description(description), availability(true), 
+      yearMade(yearMade), description(description), availability(true), consumingPoint(consumingPoint), 
       rentalPeriod(0, 0), // Provide default TimePeriod values
       minimumRenterRating(minimumRenterRating), owner(nullptr) {
     // Initialize other Motorbike attributes or perform necessary setup
 }
+
+Motorbike::Motorbike() : model(""), color(""), engineSize(0.0), transmissionMode(""),
+    yearMade(0), description(""), availability(true), consumingPoint(0),
+    rentalPeriod(0, 0), minimumRenterRating(0), owner(nullptr) {
+    // Initialize other Motorbike attributes or perform necessary setup
+}
+
 
 
 void Motorbike::rentMotorbike(Member& renter, TimePeriod period) {

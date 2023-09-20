@@ -11,9 +11,9 @@ void NonMember::registerAsMember() {
     // You may need to create a Member object with the provided username and perform registration steps.
 }
 
-void NonMember::viewMotorbikeDetails() {
-    // Implement viewing motorbike details
-    // Display motorbike information to non-members.
+boolean isGuest() {
+    return true;
 }
+
 
 // You can add more methods or functionality to the NonMember class as needed.

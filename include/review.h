@@ -6,13 +6,16 @@
 class Review {
 private:
     int score; // Rating score (1 to 10)
-    std::string comments; // Review comments
+    std::string comment; // Review comments
 
 public:
-    Review(int score, std::string comments);
+    Review(int score, std::string comment);
+    Review();
 
     int getScore() const;
-    std::string getComments() const;
+    std::string getComment() const;
+    void Review::setScore(int score);
+    void Review::setComment(std::string comment);
 };
 
 #endif

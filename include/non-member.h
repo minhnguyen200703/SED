@@ -11,7 +11,7 @@ public:
     NonMember(std::string username);
 
     void registerAsMember();
-    void viewMotorbikeDetails();
+    boolean isGuest();
 };
 
 #endif

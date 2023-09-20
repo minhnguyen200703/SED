@@ -17,14 +17,19 @@ private:
     bool availability;
     TimePeriod rentalPeriod; // Added rental period attribute
     int minimumRenterRating;
+    int consumingPoint;
+    double ratingScores;
+
+    std::vector<Review> reviews;
+
 
     Member* owner; // Pointer to the owner of the motorbike
 
 public:
     // Constructor for creating a Motorbike instance
     Motorbike(std::string model, std::string color, double engineSize, std::string transmissionMode,
-              int yearMade, std::string description, int minimumRenterRating);
-
+              int yearMade, std::string description, int minimumRenterRating, int consumingPoint);
+    Motorbike();
     // Rent the motorbike to a member for a specified time period
     void rentMotorbike(Member& renter, TimePeriod period);
 
@@ -45,6 +50,7 @@ public:
 
     // Set the owner of the motorbike
     void setOwner(Member* newOwner);
+    void setTimePeriod();
 };
 
 #endif

@@ -2,17 +2,12 @@
 #include "Member.h"
 #include "Motorbike.h"
 
-Admin::Admin(std::string username, std::string password)
-    : Account("", username, password) {
+Admin::Admin(std::string id, std::string username, std::string password)
+    : Account(id, username, password) {
     // Initialize other admin attributes or perform necessary setup
 }
 
-// bool Admin::login(const std::string& fileName, const std::string& username, const std::string& password) {
-//     // Implement admin login logic
-//     // Check if the provided username and password match the admin's credentials.
-//     // Return true if login is successful, otherwise return false.
-//     return (username == getUsername() && checkPassword(password));
-// }
+
 
 void Admin::viewMemberInfo() {
     // Implement viewing member information

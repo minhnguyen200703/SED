@@ -21,7 +21,7 @@ public:
     void setSalt(std::string salt);
     bool checkPassword(std::string password) const;
     std::string getPassword() const;
-    bool login(const std::string& fileName, const std::string& username, const std::string& password);
+    Account* login(const std::string& fileName, const std::string& username, const std::string& password);
     // The 'virtual' keyword makes this function abstract, and it must be overridden in derived classes.
     
     virtual std::string getRole();
