@@ -4,6 +4,8 @@
 #include <string>
 #include "../include/hashpassword.h" // HashPassword class
 
+class HashPassword;
+
 class Account {
 private:
     std::string id;

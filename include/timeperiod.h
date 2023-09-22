@@ -2,6 +2,7 @@
 #define TIMEPERIOD_H
 
 #include "../include/datetime.h" // Include the DateTime class
+#include "vector"
 
 class TimePeriod {
 private:

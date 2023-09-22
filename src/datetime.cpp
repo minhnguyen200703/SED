@@ -40,16 +40,24 @@ bool DateTime::operator!=(const DateTime& other) const {
 }
 
 bool DateTime::operator<(const DateTime& other) const {
-    if (year != other.year) {
-        return year < other.year;
+    if (year < other.year) {
+        return true;
+    } else if (year == other.year) {
+        if (month < other.month) {
+            return true;
+        } else if (month == other.month) {
+            if (day < other.day) {
+                return true;
+            } else if (day == other.day) {
+                
+            }
+        }
     }
-    if (month != other.month) {
-        return month < other.month;
-    }
-    if (day != other.day) {
-        return day < other.day;
-    }
+
+    // If none of the conditions above are met, return false
+    return false;
 }
+
 
 bool DateTime::operator<=(const DateTime& other) const {
     return (*this < other) || (*this == other);

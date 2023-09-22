@@ -4,9 +4,9 @@
 #include <string>
 #include <vector>
 #include "../include/timeperiod.h"
-#include "../include/member.h"
 
 class Member;
+class TimePeriod;
 class Motorbike {
 private:
     std::string model;

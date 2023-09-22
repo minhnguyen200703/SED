@@ -7,6 +7,7 @@
 #include "../include/review.h"
 
 class Member;
+class Motorbike;
 class RentalRequest {
 private:
     Member* requester; // Pointer to the member making the request
@@ -19,7 +20,9 @@ private:
 public:
     // Constructors
     RentalRequest(Member& requester, Motorbike& motorbike, const TimePeriod& rentalPeriod); // Create New
-    RentalRequest(Member& requester, Motorbike& motorbike, const TimePeriod& rentalPeriod, Review& motorbikeReview, Review& renterReview, std::string status);
+    RentalRequest(Member requester, Motorbike motorbike, 
+                const TimePeriod rentalPeriod, Review motorbikeReview,
+                Review renterReview, std::string status);
     RentalRequest();
 
     // Getter functions

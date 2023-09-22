@@ -6,11 +6,12 @@
 #include <regex>
 #include <ctime>
 #include <cstdlib>
+#include "../include/method.h"
 
 using namespace std;
-class Method {
-public:
-    static int readList(const string& fileName, const string& splitPoint) {
+
+
+     int Method::readList(const string& fileName, const string& splitPoint) {
         ifstream file(fileName);
         string line;
         string lastLine = "";
@@ -28,7 +29,7 @@ public:
         }
     }
 
-    static string generateID(const string& id, const string& fileName, const string& splitPoint) {
+     string Method::generateID(const string& id, const string& fileName, const string& splitPoint) {
         int amount = readList(fileName, splitPoint);
         if (amount <= 0) {
             return id + "1";
@@ -38,7 +39,7 @@ public:
         }
     }
 
-    static string validateEmpty(string variable) {
+     string Method::validateEmpty(string variable) {
         do {
             if (variable.empty() || variable.find_first_not_of(' ') == string::npos) {
                 cout << "Your full name is invalid, please re-input your full name: ";
@@ -50,7 +51,7 @@ public:
         return variable;
     }
 
-    static string validatePhone(string phoneNumber) {
+     string Method::validatePhone(string phoneNumber) {
         do {
             if (phoneNumber.empty() || !regex_match(phoneNumber, regex("^(0|\\+84)(\\s|\\.)?((3[2-9])|(5[689])|(7[06-9])|(8[1-689])|(9[0-46-9]))(\\d)(\\s|\\.)?(\\d{3})(\\s|\\.)?(\\d{3})$"))) {
                 cout << "Your phone number is invalid, please re-input your phone number: ";
@@ -62,7 +63,7 @@ public:
         return phoneNumber;
     }
 
-    static string validateEmail(string email) {
+     string Method::validateEmail(string email) {
         do {
             if (email.empty() || !regex_match(email, regex("^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$"))) {
                 cout << "Your email is invalid, please re-input your email: ";
@@ -74,7 +75,7 @@ public:
         return email;
     }
 
-    static int validatePrice(string priceInput) {
+     int Method::validatePrice(string priceInput) {
         int price = 0;
         bool valid = false;
         while (!valid) {
@@ -97,7 +98,7 @@ public:
         return price;
     }
 
-    static int validateNumber(string str) {
+     int Method::validateNumber(string str) {
         int number = 0;
         bool valid = false;
         while (!valid) {
@@ -118,7 +119,7 @@ public:
         return number;
     }
 
-    static double validateDouble(const std::string& str) {
+     double Method::validateDouble(const std::string& str) {
     double number = 0.0;
     bool valid = false;
 
@@ -150,7 +151,7 @@ public:
 }
 
 
-    static void removeById(const string& id, const string& fileName, const string& split) {
+    void Method::removeById(const string& id, const string& fileName, const string& split) {
         ifstream inputFile(fileName);
         ofstream outputFile("temp.txt");
         string line;
@@ -169,7 +170,7 @@ public:
         rename("temp.txt", fileName.c_str());
     }
 
-    static void removeByName(const string& name, const string& fileName, const string& split) {
+    void Method::removeByName(const string& name, const string& fileName, const string& split) {
         ifstream inputFile(fileName);
         ofstream outputFile("temp.txt");
         string line;
@@ -187,4 +188,3 @@ public:
         remove(fileName.c_str());
         rename("temp.txt", fileName.c_str());
     }
-};

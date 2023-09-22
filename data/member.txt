@@ -1,2 +1,1 @@
-1|username|hashedPassword|salt|fullname|phone|idtype|idnumber|driverlicance|expirydate|city|creditpoint|ratingscore
-2|username1|hashedPassword|salt|fullname|phone|idtype|idnumber|driverlicance|expirydate|city|creditpoint|ratingscore
+|Minh|85caab465d62e04462ea99cfa420781801aa9a6f5cefa9e1bfd1750fdbb21335|JTv5aL2G89kPtHSX|123|123|Passport|123|321|20/10/2021||20|0

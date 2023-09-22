@@ -5,7 +5,7 @@ RentalRequest::RentalRequest(Member& requester, Motorbike& motorbike, const Time
     : requester(&requester), motorbike(&motorbike), rentalPeriod(rentalPeriod), status("Pending") {}
 
 
-RentalRequest::RentalRequest(Member& requester, Motorbike& motorbike, const TimePeriod& rentalPeriod, Review& motorbikeReview, Review& renterReview, std::string status)
+RentalRequest::RentalRequest(Member requester, Motorbike motorbike, const TimePeriod rentalPeriod, Review motorbikeReview, Review renterReview, std::string status)
     : requester(&requester), motorbike(&motorbike), rentalPeriod(rentalPeriod), motorbikeReview(motorbikeReview), renterReview(renterReview), status(status) {}
 
     RentalRequest::RentalRequest() {};

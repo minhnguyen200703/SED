@@ -1,3 +1,7 @@
+#include <fstream>
+#include <iostream>
+#include <vector>
+#include <limits> 
 #include "../include/member.h"
 #include "../include/motorbike.h"
 #include "../include/rentalrequest.h"
@@ -6,11 +10,8 @@
 #include "../include/method.h"
 #include "../include/datetime.h"
 #include "../include/timeperiod.h"
+#include "../include/account.h"
 
-#include <fstream>
-#include <iostream>
-#include <vector>
-#include <limits> // Include the <limits> header
 
 // Constructor to initialize member attributes
 Member::Member(std::string id, std::string username, std::string password, std::string fullName, std::string phoneNumber, 
@@ -34,65 +35,11 @@ Member::Member(std::string id, std::string usernameReg, std::string hashedPasswo
 
 Member::Member(){};
 
-// Member registration
-static void registerMember(std::vector<Member> &members)
-{
-    // Implement member registration logic
-    // You should prompt the user to enter necessary information and store it securely.
-    std::string id, username, password, fullName, phoneNumber, idType, idNumber, driverLicenseNumber, expiryDate;
 
-    // Prompt the user to enter registration details
-    std::cout << "Enter Member ID: ";
-    std::cin >> id;
-
-    // Check if the entered username already exists
-    bool usernameExists = false;
-    do
-    {
-        std::cout << "Enter Username: ";
-        std::cin >> username;
-
-        // Loop through existing members to check if the username exists
-        for (const Member &existingMember : members)
-        {
-            if (existingMember.getUsername() == username)
-            {
-                std::cout << "Username already exists. Please choose a different username." << std::endl;
-                usernameExists = true;
-                break;
-            }
-        }
-    } while (usernameExists);
-
-    std::cout << "Enter Password: ";
-    std::cin >> password; // You can use a password validation function here.
-
-    std::cout << "Enter Full Name: ";
-    std::cin.ignore();
-    std::getline(std::cin, fullName);
-    std::cout << "Enter Phone Number: ";
-    std::cin >> phoneNumber;
-    std::cout << "Enter ID Type: ";
-    std::cin >> idType;
-    std::cout << "Enter ID Number: ";
-    std::cin >> idNumber;
-    std::cout << "Enter Driver License Number: ";
-    std::cin >> driverLicenseNumber;
-    std::cout << "Enter Expiry Date: ";
-    std::cin >> expiryDate;
-
-    // Create a Member object with the provided information
-    Member newMember(id, username, password, fullName, phoneNumber, idType, idNumber, driverLicenseNumber, expiryDate);
-
-    // Store the member data or perform any necessary operations
-    members.push_back(newMember);
-
-    std::cout << "Member registration completed. You have 20 credit points" << std::endl;
-}
 
 
 // List a motorbike for rent
-void Member::addMotorbike()
+void Member::addMotorbike(vector<Motorbike> motorbikes)
 {
     std::string model, color, engineSizeVal, transmissionMode, description, yearMadeVal, minimumRenterRatingVal;
     std::cout << "Enter Model Name: ";
@@ -122,7 +69,9 @@ void Member::addMotorbike()
 
 void Member::listMotorbike()
 {
-    Motorbike motorbike = this->getMotorbikes();
+    Motorbike* ptr = this->getMotorbikes();
+
+    Motorbike motorbike = *ptr;
     std::string minimumRenterRatingVal;
     std::string consumingPointsVal;
 
@@ -199,7 +148,8 @@ void Member::listMotorbike()
 // Unlist a motorbike
 void Member::unlistMotorbike()
 {
-    Motorbike motorbike = this->getMotorbikes();
+    Motorbike* ptr = this->getMotorbikes();
+    Motorbike motorbike = *ptr;
     motorbike.setAvailability(false);
     motorbike.removeAvailablePeriods();
     std::cout << "Motorbike unlisted!" << std::endl;
@@ -503,11 +453,13 @@ void Member::viewUnscoredRequests(bool showRentedRequests)
     }
 }
 
+
+
 // View member information
 void Member::viewMemberInfo()
 {
     std::cout << "Member Information:" << std::endl;
-    std::cout << "Username: " << getUsername() << std::endl;
+    std::cout << "Username: " << Account::getUsername() << std::endl;
     std::cout << "Full Name: " << getFullName() << std::endl;
     std::cout << "Phone Number: " << getPhoneNumber() << std::endl;
     std::cout << "ID Type: " << getIdType() << std::endl;
@@ -562,7 +514,7 @@ int Member::getCreditPoints() const
     return creditPoints;
 }
 
-Motorbike Member::getMotorbikes() const
+Motorbike* Member::getMotorbikes() const
 {
     return motorbikes;
 }
@@ -580,11 +532,6 @@ std::vector<RentalRequest> Member::getRentalRequests() const
 std::vector<RentalRequest> Member::getRentedRentalRequests() const
 {
     return rentedRentalRequests;
-}
-
-int Member::getCreditPoints() const
-{
-    return creditPoints;
 }
 
 // Setter functions
@@ -628,14 +575,9 @@ void Member::setCreditPoints(int newCreditPoints)
     creditPoints = newCreditPoints;
 }
 
-void Member::setCreditPoints(int newCreditPoints)
-{
-    creditPoints = newCreditPoints;
-}
-
 void Member::setMotorbikes(Motorbike newMotorbike)
 {
-    motorbikes = newMotorbike;
+    motorbikes = &newMotorbike;
     std::cout << "Motorbike added!" << std::endl;
 }
 
@@ -828,4 +770,4 @@ void Member::addCreditPoints()
     creditPoints += amountToAdd;
 
     std::cout << "Your credit points have been added. Your new balance is: " << creditPoints << " points." << std::endl;
-}
+};

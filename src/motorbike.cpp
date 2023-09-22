@@ -14,7 +14,6 @@ Motorbike::Motorbike(std::string model, std::string color, double engineSize, st
 
 // for existed motorbike with availability false
     
-    
 Motorbike::Motorbike(std::string model, std::string color, double engineSize, std::string transmissionMode,
     int yearMade, std::string description, Member* member, double ratingScores)
     : model(model), color(color), engineSize(engineSize), transmissionMode(transmissionMode),
@@ -100,6 +99,11 @@ bool Motorbike::periodIsValid(const TimePeriod& period) const {
     // If no available period contains the specified period, it's not valid
     return false;
 }
+
+std::string Motorbike::getLocation() const {
+    return owner->getCity();
+}
+
 
 void Motorbike::editMotorbikeRatingScore() {
     int totalScore = 0;

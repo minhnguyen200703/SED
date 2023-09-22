@@ -3,12 +3,15 @@
 
 #include <string>
 #include <vector>
-#include "../include/motorbike.h"
 #include "../include/rentalrequest.h"
 #include "../include/review.h"
 #include "../include/account.h"
+#include "../include/method.h"
 
-
+class Method;
+class Motorbike;
+class RentalRequest;
+class TimePeriod;
 class Member : public Account {
 public:
     // Constructors
@@ -19,8 +22,7 @@ public:
         std::string idNumber, std::string driverLicenseNumber, std::string expiryDate, std::string city, int creditPoints, double ratingScores);
 
     Member ();
-    // Member registration
-    static void registerMember(std::vector<Member> members);
+    
 
     // List a motorbike for rent
     void listMotorbike();
@@ -50,7 +52,7 @@ public:
     void viewMemberInfo();
 
     // Add Motorbike information
-    void addMotorbike();
+    void addMotorbike(vector<Motorbike> motorbikes);
 
     // 
     void receiveRentalRequest(const RentalRequest& request);
@@ -62,16 +64,13 @@ public:
 
     // Getter functions
     std::string getId() const;
-    std::string getUsername() const;
-    std::string getPassword() const;
-    std::string getSalt() const;
     std::string getFullName() const;
     std::string getPhoneNumber() const;
     std::string getIdType() const;
     std::string getIdNumber() const;
     std::string getDriverLicenseNumber() const;
     std::string getExpiryDate() const;
-    Motorbike getMotorbikes() const;
+    Motorbike* getMotorbikes() const;
     int getCreditPoints() const;
     double getRatingScores() const;
     std::vector<RentalRequest> getRentalRequests() const;
@@ -79,9 +78,6 @@ public:
 
     // Setter functions
     void setId(const std::string& newId);
-    void setUsername(const std::string& newUsername);
-    void setPassword(const std::string& newPassword);
-    void setSalt(const std::string& newSalt);
     void setFullName(const std::string& newFullName);
     void setPhoneNumber(const std::string& newPhoneNumber);
     void setIdType(const std::string& newIdType);
@@ -117,7 +113,7 @@ private:
     int creditPoints;
     double ratingScores;
 
-    Motorbike motorbikes;
+    Motorbike* motorbikes;
     std::vector<RentalRequest> rentalRequests; // chua incoming request, ngta thue cua minh, nguoi ta danh gia xe, minh la motorbike owner
     std::vector<RentalRequest> rentedRentalRequests; // chua request cua minh`, request history, minh thue cua ngta, ngta danh gia minh, minh la renter
 
