@@ -18,8 +18,9 @@ public:
     Member(std::string id, std::string usernameReg, std::string password, std::string salt, std::string fullName, std::string phoneNumber, std::string idType,
         std::string idNumber, std::string driverLicenseNumber, std::string expiryDate, int creditPoints);
 
+    Member ();
     // Member registration
-    void registerMember();
+    static void registerMember(std::vector<Member> members);
 
     // List a motorbike for rent
     void listMotorbike();
@@ -28,22 +29,36 @@ public:
     void unlistMotorbike();
 
     // Request to rent a motorbike
-    void requestToRentMotorbike(Motorbike motorbike, TimePeriod period);
+    bool requestToRentMotorbike(Motorbike& motorbike, TimePeriod period);
 
     // View rental requests
-    void viewRequests();
+    void viewRequests(std::string type);
+
+    // View requests on status
+    void viewRentalRequests(const std::string& type, const std::string& status);
 
     // Rate a rented motorbike
-    void rateMotorbike(Motorbike motorbike, Review review);
+    void rateMotorbike(Motorbike motorbike, RentalRequest motorbikeRequest);
 
     // Rate a renter (another member)
-    void rateRenter(Member renter, Review review);
+    void rateRenter(Member renter, RentalRequest renterRequest);
 
     // Top up credit points
-    void topUpCreditPoints(int amount);
+    void topUpCreditPoints();
 
     // View member information
     void viewMemberInfo();
+
+    // Add Motorbike information
+    void addMotorbike();
+
+    // 
+    void receiveRentalRequest(const RentalRequest& request);
+
+    // 
+    void editRatingScore();
+
+    void viewUnscoredRequests(bool showRentedRequests);
 
     // Getter functions
     std::string getId() const;
@@ -60,6 +75,7 @@ public:
     int getCreditPoints() const;
     double getRatingScores() const;
     std::vector<RentalRequest> getRentalRequests() const;
+    std::vector<RentalRequest> getRentedRentalRequests() const;
 
     // Setter functions
     void setId(const std::string& newId);
@@ -77,12 +93,13 @@ public:
     void setRatingScores(double ratingScores);
     void setRentalRequests(const std::vector<RentalRequest>& newRentalRequests);
     void addRentalRequest(const RentalRequest& request);
-
-    // Function to write member data to a database file
-    void writeToDatabase(const Member& account, const std::string& filename);
-
-    // Get the role (type) of the member
+    void setRentedRentalRequests(const std::vector<RentalRequest>& newRentedRentalRequests);
+    void addRentedRentalRequest(const RentalRequest& rentedRentalRequests);
+    void editMemberRatingScore();
+   // Get the role (type) of the member
     std::string getRole();
+    std::string getCity();
+    void setCity(std::string city);
 
 private:
     std::string id;
@@ -92,12 +109,14 @@ private:
     std::string idNumber;
     std::string driverLicenseNumber;
     std::string expiryDate;
+    std::string city;
     
     int creditPoints;
     double ratingScores;
 
     Motorbike motorbikes;
-    std::vector<RentalRequest> rentalRequests;
+    std::vector<RentalRequest> rentalRequests; // chua incoming request, minh htue cua nguoi ta, nguoi ta danh gia minh
+    std::vector<RentalRequest> rentedRentalRequests; // chua request cua user, nguoi ta thue cua minh, nguoi ta danh gia xe
 
 };
 

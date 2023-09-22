@@ -15,6 +15,7 @@ public:
     Account(std::string id, std::string usernameReg, std::string password);
     Account(std::string id, std::string usernameReg, std::string password, std::string salt);
     Account(std::string id, std::string usernameReg);
+    Account();
     std::string getId() const;
     std::string getUsername() const;
     std::string getSalt() const;

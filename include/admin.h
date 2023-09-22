@@ -6,6 +6,7 @@
 class Admin : public Account {
 public:
     Admin(std::string id, std::string username, std::string password);
+    Admin();
 
     void viewMemberInfo();
     void viewMotorbikeInfo();

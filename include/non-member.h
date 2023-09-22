@@ -8,10 +8,9 @@ private:
     std::string username; // Non-members can choose a username for registration
 
 public:
-    NonMember(std::string username);
+    NonMember();
 
-    void registerAsMember();
-    boolean isGuest();
+    bool isGuest();
 };
 
 #endif

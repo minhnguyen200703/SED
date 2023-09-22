@@ -7,6 +7,10 @@ Admin::Admin(std::string id, std::string username, std::string password)
     // Initialize other admin attributes or perform necessary setup
 }
 
+ Admin::Admin() {
+        // Initialization code if needed
+    }
+
 
 
 void Admin::viewMemberInfo() {

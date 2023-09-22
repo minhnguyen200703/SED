@@ -16,6 +16,8 @@ Account::Account(std::string id, std::string usernameReg, std::string password, 
     this->password = HashPassword::get_SHA_256_SecurePassword(password, this->salt);
 }
 
+Account::Account() {};
+
 Account::Account(std::string id, std::string usernameReg) {
     this->id = id;
     this->username = usernameReg;

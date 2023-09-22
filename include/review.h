@@ -17,5 +17,5 @@ public:
     void Review::setScore(int score);
     void Review::setComment(std::string comment);
 };
-
+ 
 #endif

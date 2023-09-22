@@ -1,17 +1,33 @@
 #ifndef TIMEPERIOD_H
 #define TIMEPERIOD_H
 
+#include "DateTime.h" // Include the DateTime class
+
 class TimePeriod {
 private:
-    int startHour;
-    int endHour;
+    DateTime startDate;
+    DateTime endDate;
 
 public:
-    TimePeriod(int startHour, int endHour);
+    TimePeriod(const DateTime& start, const DateTime& end);
+    TimePeriod();
 
-    int getStartHour() const;
-    int getEndHour() const;
+    // Getter functions for start and end dates
+    DateTime getStartDate() const;
+    DateTime getEndDate() const;
+
+    // Function to check if a given DateTime is within the time period
+    bool contains(const TimePeriod& other) const;
+
+    // Function to check if two time periods overlap
     bool overlapsWith(const TimePeriod& other) const;
+    std::vector<TimePeriod> splitIfOverlaps(const TimePeriod& rentingPeriod) const;
+    std::vector<TimePeriod> splitTimePeriodsContainingRentingPeriod(
+        const std::vector<TimePeriod>& currentPeriods,
+        const TimePeriod& rentingPeriod
+    ) const;
+    int getNumberOfDays() const;
+
 };
 
 #endif
