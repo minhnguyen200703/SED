@@ -25,8 +25,6 @@ public:
     Account* login(const std::string& fileName, const std::string& username, const std::string& password);
     // The 'virtual' keyword makes this function abstract, and it must be overridden in derived classes.
     
-    virtual std::string getRole();
-    virtual ~Account(); // Virtual destructor for polymorphism.
 };
 
 #endif

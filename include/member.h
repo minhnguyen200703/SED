@@ -101,7 +101,6 @@ public:
     void RateRenter();
     void addCreditPoints();
    // Get the role (type) of the member
-    std::string getRole();
     std::string getCity() const;
     void setCity(std::string city);
 

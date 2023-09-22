@@ -6,6 +6,7 @@
 #include "../include/timeperiod.h"
 #include "../include/member.h"
 
+class Member;
 class Motorbike {
 private:
     std::string model;

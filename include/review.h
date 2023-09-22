@@ -14,8 +14,8 @@ public:
 
     int getScore() const;
     std::string getComment() const;
-    void Review::setScore(int score);
-    void Review::setComment(std::string comment);
+    void setScore(int score);
+    void setComment(std::string comment);
 };
  
 #endif

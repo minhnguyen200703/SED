@@ -1,6 +1,7 @@
 // Motorbike.cpp
 #include "../include/motorbike.h"
-#include "../include/member.h" // Include the Member header to access member-related functionality
+#include "../include/member.h" 
+using namespace std;
 
 // for creating new motorbike
 Motorbike::Motorbike(std::string model, std::string color, double engineSize, std::string transmissionMode,
@@ -43,7 +44,7 @@ Motorbike::Motorbike() {
 void Motorbike::viewMotorbikeDetails(int index) const {
     std::cout << "Index: " << index << std::endl;
     std::cout << "Motorbike Details:" << std::endl;
-    std::cout << "Model: " << getModel() << std::endl;
+    std::cout << "Model: " << Motorbike::getModel() << std::endl;
     std::cout << "Color: " << getColor() << std::endl;
     std::cout << "Engine Size: " << getEngineSize() << " cc" << std::endl;
     std::cout << "Transmission Mode: " << getTransmissionMode() << std::endl;
@@ -250,7 +251,7 @@ void Motorbike::setAvailablePeriods(std::vector<TimePeriod> newRentalPeriods) {
 };
 
 std::string Motorbike::getMotorbikeDetails() const {
-    std::string details = "Model: " + getModel() + "\n";
+    std::string details = "Model: " + this->Motorbike::getModel() + "\n";
     details += "Color: " + getColor() + "\n";
     details += "Engine Size: " + std::to_string(getEngineSize()) + " cc\n";
     details += "Transmission Mode: " + getTransmissionMode() + "\n";

@@ -33,7 +33,7 @@ public:
         int choice;
         do
         {
-            loadData();
+            // loadData();
             displayWelcomeScreen();
             cout << "Enter your choice: ";
             cin >> choice;
@@ -62,7 +62,6 @@ public:
         } while (choice != 0);
     }
 
-    // Add member, motorbike, and admin management functions here
 
     
 
@@ -200,10 +199,10 @@ public:
                 rentMotorbike(currentMember);
                 break;
             case 6:
-                currentMember.viewRequests("1"); // View all imcoming rental requests
+                currentMember.Member::viewRequests("1"); // View all imcoming rental requests
                 break;
             case 7:
-                currentMember.viewRequests("2"); // View my requests
+                currentMember.Member::viewRequests("2"); // View my requests
                 break;
             case 8:
                 viewAndAcceptRentalRequest(currentMember);
@@ -211,10 +210,10 @@ public:
                 break;
             case 9:
                 // Implement rating a rented motorbike
-                currentMember.RentRequestedMotorbike();
+                currentMember.Member::RentRequestedMotorbike();
                 break;
             case 10:
-                currentMember.RateRenter();
+                currentMember.Member::RateRenter();
                 break;
             case 11:
                 listMotorbike();
@@ -222,7 +221,7 @@ public:
                 break;
 
             case 12:
-                currentMember.addCreditPoints();
+                currentMember.Member::addCreditPoints();
 
                 break;
             case 0:
@@ -267,9 +266,9 @@ public:
         std::cout << "All Available Motorbike Details:" << std::endl;
         for (const Motorbike &motorbike : motorbikes)
         {
-            if (motorbike.getAvailability())
+            if (motorbike.Motorbike::getAvailability())
             {
-                motorbike.viewMotorbikeDetails(index);
+                motorbike.Motorbike::viewMotorbikeDetails(index);
             }
             index++;
         }
@@ -281,9 +280,9 @@ public:
         std::cout << "All Available Motorbike Details:" << std::endl;
         for (const Motorbike &motorbike : motorbikes)
         {
-            if (motorbike.getAvailability())
+            if (motorbike.Motorbike::getAvailability())
             {
-                motorbike.viewMotorbikeDetailsWithReview(index);
+                motorbike.Motorbike::viewMotorbikeDetailsWithReview(index);
             }
             index++;
         }
@@ -300,9 +299,9 @@ public:
         std::cout << "All Available Motorbike Details in " << city << " that fit your credit points and rating score:" << std::endl;
         for (const Motorbike &motorbike : motorbikes)
         {
-            if (motorbike.getLocation() == city && (motorbike.getConsumingPoint() <= member.getCreditPoints()) && (motorbike.getMinimumRenterRating() <= member.getRatingScores()) && motorbike.getAvailability())
+            if (motorbike.Motorbike::getLocation() == city && (motorbike.Motorbike::getConsumingPoint() <= member.Member::getCreditPoints()) && (motorbike.Motorbike::getMinimumRenterRating() <= member.Member::getRatingScores()) && motorbike.Motorbike::getAvailability())
             {
-                motorbike.viewMotorbikeDetailsWithReview(index);
+                motorbike.Motorbike::viewMotorbikeDetailsWithReview(index);
             }
             index++;
         }
@@ -329,7 +328,7 @@ public:
         Motorbike &selectedMotorbike = motorbikes[motorbikeIndex];
 
         // Step 3: Display the maximum rental duration allowed
-        int maxRentalDays = div(member.getCreditPoints(), selectedMotorbike.getConsumingPoint()).quot;
+        int maxRentalDays = div(member.Member::getCreditPoints(), selectedMotorbike.Motorbike::getConsumingPoint()).quot;
 
         std::cout << "Maximum rental duration allowed for this motorbike: " << maxRentalDays << " days" << std::endl;
 
@@ -340,7 +339,7 @@ public:
         std::cin >> startDateStr;
 
         // Validate and parse the start date
-        if (!startDate.parseDateTime(startDateStr))
+        if (!startDate.DateTime::parseDateTime(startDateStr))
         {
             std::cout << "Invalid date format. Please use YYYY-MM-DD format." << std::endl;
             return;
@@ -351,7 +350,7 @@ public:
         std::cin >> endDateStr;
 
         // Validate and parse the end date
-        if (!endDate.parseDateTime(endDateStr))
+        if (!endDate.DateTime::parseDateTime(endDateStr))
         {
             std::cout << "Invalid date format. Please use YYYY-MM-DD format." << std::endl;
             return;
@@ -435,7 +434,7 @@ public:
         }
     }
 
-    void MotorbikeRentalApp::loadData()
+    void loadData()
     {
         // Load data from the member.txt file into the members vector
         ifstream memberFile("../data/member.txt");
@@ -557,84 +556,79 @@ public:
         }
 
         // Load data from the rentalrequests.txt file into the rentalRequests vector
-        ifstream rentalRequestsFile("../data/rentalrequests.txt");
-        if (rentalRequestsFile.is_open())
-        {
-            string line;
-            while (getline(rentalRequestsFile, line))
-            {
+        // ifstream rentalRequestsFile("../data/rentalrequests.txt");
+        // if (rentalRequestsFile.is_open())
+        // {
+        //     string line;
+        //     while (getline(rentalRequestsFile, line))
+        //     {
 
-                // Split the line into fields
-                vector<string> fields;
-                string field;
-                istringstream lineStream(line);
-                while (getline(lineStream, field, '|'))
-                {
-                    fields.push_back(field);
-                }
+        //         // Split the line into fields
+        //         vector<string> fields;
+        //         string field;
+        //         istringstream lineStream(line);
+        //         while (getline(lineStream, field, '|'))
+        //         {
+        //             fields.push_back(field);
+        //         }
 
-                if (fields.size() == 8)
-                {
-                    Member *renter = nullptr;
-                    Member *owner = nullptr;
-                    Motorbike *mtb = nullptr;
-                    for (Member &member : members)
-                    {
-                        if (member.getId() == fields[0])
-                        {
-                            renter = &member;
-                            break;
-                        }
-                        if (member.getId() == fields[1])
-                        {
-                            owner = &member;
-                            mtb = &member.getMotorbikes();
-                            break;
-                        }
-                        if (renter && owner)
-                        {
-                            break;
-                        }
-                    };
-                    // Assuming your RentalRequest class has a constructor that takes these fields as parameters
+        //         if (fields.size() == 8)
+        //         {
+        //             Member renter;
+        //             Member owner;
+        //             for (auto& member : members)
+        //             {
+        //                 if (member.getId() == fields[0])
+        //                 {
+        //                     renter = member;
+        //                     break;
+        //                 }
+        //                 if (member.getId() == fields[1])
+        //                 {
+        //                     owner = member;
+        //                     break;
+        //                 }
+                        
+        //             };
+        //             // Assuming your RentalRequest class has a constructor that takes these fields as parameters
 
-                    vector<string> dateParts;
-                    istringstream dateStream(fields[2]);
-                    string datePart;
-                    vector<int> dateValues;
-                    TimePeriod period;
-                    while (getline(dateStream, datePart, ','))
-                    {
-                        dateValues.push_back(stoi(datePart));
-                    }
+        //             vector<string> dateParts;
+        //             istringstream dateStream(fields[2]);
+        //             string datePart;
+        //             vector<int> dateValues;
+        //             TimePeriod period;
+        //             while (getline(dateStream, datePart, ','))
+        //             {
+        //                 dateValues.push_back(stoi(datePart));
+        //             }
 
-                    if (dateValues.size() == 6)
-                    {
-                        DateTime startDate(dateValues[0], dateValues[1], dateValues[2]);
-                        DateTime endDate(dateValues[3], dateValues[4], dateValues[5]);
-                        period = TimePeriod(startDate, endDate); // Assign the TimePeriod object
-                    }
-                    Review motorbikeReview = Review(stoi(fields[3]), fields[4]);
-                    Review renterReview = Review(stoi(fields[5]), fields[6]);
+        //             if (dateValues.size() == 6)
+        //             {
+        //                 DateTime startDate(dateValues[0], dateValues[1], dateValues[2]);
+        //                 DateTime endDate(dateValues[3], dateValues[4], dateValues[5]);
+        //                 period = TimePeriod(startDate, endDate); // Assign the TimePeriod object
+        //             }
+        //             Review motorbikeReview = Review(stoi(fields[3]), fields[4]);
+        //             Review renterReview = Review(stoi(fields[5]), fields[6]);
 
-                    RentalRequest request(*renter, *mtb, period, motorbikeReview, renterReview, fields[7]);
-                    rentalRequests.push_back(request);
-                    renter->addRentalRequest(request);
-                    renter->editRatingScore();
-                    owner->addRentedRentalRequest(request);
-                    mtb->editMotorbikeRatingScore();
-                }
-                else
-                {
-                    cerr << "Invalid data in rentalrequests.txt: " << line << endl;
-                }
-            }
-            rentalRequestsFile.close();
-        }
-        else
-        {
-            cerr << "Error opening rentalrequests.txt" << endl;
-        }
+        //             RentalRequest request(renter, owner.getMotorbikes(), period, motorbikeReview, renterReview, fields[7]);
+        //             rentalRequests.push_back(request);
+        //             renter.addRentalRequest(request);
+        //             renter.editRatingScore();
+        //             owner.addRentedRentalRequest(request);
+        //             owner.getMotorbikes().editMotorbikeRatingScore();
+        //         }
+        //         else
+        //         {
+        //             cerr << "Invalid data in rentalrequests.txt: " << line << endl;
+        //         }
+        //     }
+        //     rentalRequestsFile.close();
+        // }
+        // else
+        // {
+        //     cerr << "Error opening rentalrequests.txt" << endl;
+        // }
     }
 
     void writeMembersToFile(const std::string &filename)
@@ -649,19 +643,19 @@ public:
 
         for (const Member &member : members)
         {
-            file << member.getId() << "|"
-                 << member.getUsername() << "|"
-                 << member.getPassword() << "|"
-                 << member.getSalt() << "|"
-                 << member.getFullName() << "|"
-                 << member.getPhoneNumber() << "|"
-                 << member.getIdType() << "|"
-                 << member.getIdNumber() << "|"
-                 << member.getDriverLicenseNumber() << "|"
-                 << member.getExpiryDate() << "|"
-                 << member.getCity() << "|"
-                 << member.getCreditPoints() << "|"
-                 << member.getRatingScores() << "\n";
+            file << member.Member::getId() << "|"
+                 << member.Member::getUsername() << "|"
+                 << member.Member::getPassword() << "|"
+                 << member.Member::getSalt() << "|"
+                 << member.Member::getFullName() << "|"
+                 << member.Member::getPhoneNumber() << "|"
+                 << member.Member::getIdType() << "|"
+                 << member.Member::getIdNumber() << "|"
+                 << member.Member::getDriverLicenseNumber() << "|"
+                 << member.Member::getExpiryDate() << "|"
+                 << member.Member::getCity() << "|"
+                 << member.Member::getCreditPoints() << "|"
+                 << member.Member::getRatingScores() << "\n";
         }
 
         file.close();
@@ -680,7 +674,7 @@ public:
     for (const Motorbike &motorbike : motorbikes)
     {
         file << motorbike.getOwner()->getId() << "|"
-             << motorbike.getModel() << "|"
+             << motorbike.Motorbike::getModel() << "|"
              << motorbike.getColor() << "|"
              << motorbike.getEngineSize() << "|"
              << motorbike.getTransmissionMode() << "|"
@@ -754,7 +748,7 @@ public:
     {
         writeMembersToFile("../data/member.txt");
         writeMotorbikesToFile("../data/motorbike.txt");
-        writeRentalRequestsToFile("../data/rentalrequest.txt");
+        // writeRentalRequestsToFile("../data/rentalrequest.txt");
         std::cout << "File loaded!" << std::endl;
     }
 };

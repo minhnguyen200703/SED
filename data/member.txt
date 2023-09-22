@@ -1,0 +1,2 @@
+1|username|hashedPassword|salt|fullname|phone|idtype|idnumber|driverlicance|expirydate|city|creditpoint|ratingscore
+2|username1|hashedPassword|salt|fullname|phone|idtype|idnumber|driverlicance|expirydate|city|creditpoint|ratingscore
