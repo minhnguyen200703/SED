@@ -39,7 +39,7 @@ Member::Member(){};
 
 
 // List a motorbike for rent
-void Member::addMotorbike(vector<Motorbike> motorbikes)
+void Member::addMotorbike()
 {
     std::string model, color, engineSizeVal, transmissionMode, description, yearMadeVal, minimumRenterRatingVal;
     std::cout << "Enter Model Name: ";
@@ -64,7 +64,6 @@ void Member::addMotorbike(vector<Motorbike> motorbikes)
     Motorbike motorbike(model, color, engineSize, transmissionMode, yearMade,
                         description, this);
     this->setMotorbikes(motorbike);
-    std::cout << "Motorbike added!" << std::endl;
 }
 
 void Member::listMotorbike()

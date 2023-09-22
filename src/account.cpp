@@ -8,14 +8,14 @@ Account::Account(std::string id, std::string usernameReg, std::string password) 
     this->id = id;
     this->username = usernameReg;
     this->salt = HashPassword::generateSalt(); // Implement HashPassword class
-    this->password = HashPassword::get_SHA_256_SecurePassword(password, this->salt);
+    this->password = password;
 }
 
 Account::Account(std::string id, std::string usernameReg, std::string password, std::string salt) {
     this->id = id;
     this->username = usernameReg;
     this->salt = salt;
-    this->password = HashPassword::get_SHA_256_SecurePassword(password, this->salt);
+    this->password = password;
 }
 
 Account::Account() {};

@@ -52,7 +52,7 @@ public:
     void viewMemberInfo();
 
     // Add Motorbike information
-    void addMotorbike(vector<Motorbike> motorbikes);
+    void addMotorbike();
 
     // 
     void receiveRentalRequest(const RentalRequest& request);

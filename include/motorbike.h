@@ -33,7 +33,7 @@ public:
     Motorbike(std::string model, std::string color, double engineSize, std::string transmissionMode,
             int yearMade, std::string description, int consumingPoint, std::vector<TimePeriod> availablePeriod, int minimumRenterRating,
             Member* member, double ratingScores); // for existed motorbike with availability true
-    
+    Motorbike(const Motorbike& other);
     Motorbike();
 
     // Rent the motorbike to a member for a specified time period

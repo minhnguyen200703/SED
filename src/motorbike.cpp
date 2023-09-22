@@ -31,6 +31,17 @@ Motorbike::Motorbike(std::string model, std::string color, double engineSize, st
       availablePeriods(availablePeriod), minimumRenterRating(minimumRenterRating), owner(member), ratingScores(ratingScores) {
     
 }
+
+Motorbike::Motorbike(const Motorbike& other)
+    : model(other.model), color(other.color), engineSize(other.engineSize),
+      transmissionMode(other.transmissionMode), yearMade(other.yearMade),
+      description(other.description), availability(other.availability),
+      consumingPoint(other.consumingPoint), availablePeriods(other.availablePeriods),
+      minimumRenterRating(other.minimumRenterRating), owner(other.owner),
+      ratingScores(other.ratingScores) {
+    // Note: You don't need to copy the dynamically allocated resources (e.g., pointers)
+    // unless you're managing them manually. If you are, consider deep copying them.
+}
     
 
 
@@ -45,7 +56,7 @@ void Motorbike::viewMotorbikeDetails(int index) const {
     std::cout << "Motorbike Details:" << std::endl;
     std::cout << "Model: " << Motorbike::getModel() << std::endl;
     std::cout << "Color: " << getColor() << std::endl;
-    std::cout << "Engine Size: " << getEngineSize() << " cc" << std::endl;
+    std::cout << "Engine Size: " << stod(std::to_string(getEngineSize())) << " cc" << std::endl;
     std::cout << "Transmission Mode: " << getTransmissionMode() << std::endl;
     std::cout << "Year Made: " << getYearMade() << std::endl;
     std::cout << "Description: " << getDescription() << std::endl;
