@@ -1,10 +1,10 @@
 #ifndef RENTALREQUEST_H
 #define RENTALREQUEST_H
 
-#include "Member.h"
-#include "Motorbike.h"
-#include "TimePeriod.h"
-#include "Review.h"
+#include "../include/member.h"
+#include "../include/motorbike.h"
+#include "../include/timeperiod.h"
+#include "../include/review.h"
 
 class RentalRequest {
 private:
@@ -17,9 +17,9 @@ private:
 
 public:
     // Constructors
+    RentalRequest(Member& requester, Motorbike& motorbike, const TimePeriod& rentalPeriod); // Create New
     RentalRequest(Member& requester, Motorbike& motorbike, const TimePeriod& rentalPeriod);
-    RentalRequest(Member& requester, Motorbike& motorbike, const TimePeriod& rentalPeriod, Review& motorbikeReview);
-    RentalRequest(Member& requester, Motorbike& motorbike, const TimePeriod& rentalPeriod, Review& motorbikeReview, Review& renterReview);
+    RentalRequest(Member& requester, Motorbike& motorbike, const TimePeriod& rentalPeriod, Review& motorbikeReview, Review& renterReview, std::string status);
 
     // Getter functions
     Member& getRequester() const;
@@ -34,7 +34,8 @@ public:
     void setRenterReview(const Review& renterReview);
     void setStatus(const std::string& newStatus); // New setter for status
 
-    bool RentalRequest::hasRenterReview() const;
+    bool hasRenterReview() const;
+    void displayRequestDetails() const;
 };
 
 #endif

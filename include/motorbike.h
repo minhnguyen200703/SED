@@ -2,8 +2,9 @@
 #define MOTORBIKE_H
 
 #include <string>
-#include "TimePeriod.h"
-#include "Member.h" // Include the Member class header
+#include <vector>
+#include "../include/timeperiod.h"
+#include "../include/member.h"
 
 class Motorbike {
 private:
@@ -18,14 +19,20 @@ private:
     int minimumRenterRating;
     int consumingPoint;
     double ratingScores;
-
-
     Member* owner; // Pointer to the owner of the motorbike
 
 public:
     // Constructor for creating a Motorbike instance
     Motorbike(std::string model, std::string color, double engineSize, std::string transmissionMode,
-              int yearMade, std::string description, int consumingPoint, Member* member);
+              int yearMade, std::string description, Member* member);//for creating new
+    
+    Motorbike(std::string model, std::string color, double engineSize, std::string transmissionMode,
+            int yearMade, std::string description, Member* member, double ratingScores); // for existed motorbike with availability false
+    
+    Motorbike(std::string model, std::string color, double engineSize, std::string transmissionMode,
+            int yearMade, std::string description, int consumingPoint, std::vector<TimePeriod> availablePeriod, int minimumRenterRating,
+            Member* member, double ratingScores); // for existed motorbike with availability true
+    
     Motorbike();
 
     // Rent the motorbike to a member for a specified time period
@@ -52,7 +59,9 @@ public:
 
     void removeAvailablePeriods();
 
-    void editMotorbikeRatingScore(std::vector<RentalRequest> rentalRequests);
+    void editMotorbikeRatingScore();
+
+    std::string getMotorbikeDetails() const;
 
     std::string getLocation() const;
     

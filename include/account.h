@@ -2,7 +2,7 @@
 #define ACCOUNT_H
 
 #include <string>
-#include "HashPassword.h" // HashPassword class
+#include "../include/hashpassword.h" // HashPassword class
 
 class Account {
 private:

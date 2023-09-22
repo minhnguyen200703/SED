@@ -1,6 +1,6 @@
 // NonMember.cpp
-#include "non-member.h"
-#include "Member.h" // Include the Member header to access member registration functionality
+#include "../include/non-member.h"
+#include "../include/member.h" // Include the Member header to access member registration functionality
 
 NonMember::NonMember() {
     // Initialize other NonMember attributes or perform necessary setup

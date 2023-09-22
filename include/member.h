@@ -3,10 +3,10 @@
 
 #include <string>
 #include <vector>
-#include "Motorbike.h"
-#include "RentalRequest.h"
-#include "Review.h"
-#include "Account.h"
+#include "../include/motorbike.h"
+#include "../include/rentalrequest.h"
+#include "../include/review.h"
+#include "../include/account.h"
 
 
 class Member : public Account {
@@ -16,7 +16,7 @@ public:
         std::string idNumber, std::string driverLicenseNumber, std::string expiryDate);
 
     Member(std::string id, std::string usernameReg, std::string password, std::string salt, std::string fullName, std::string phoneNumber, std::string idType,
-        std::string idNumber, std::string driverLicenseNumber, std::string expiryDate, int creditPoints);
+        std::string idNumber, std::string driverLicenseNumber, std::string expiryDate, std::string city, int creditPoints, double ratingScores);
 
     Member ();
     // Member registration
@@ -96,9 +96,13 @@ public:
     void setRentedRentalRequests(const std::vector<RentalRequest>& newRentedRentalRequests);
     void addRentedRentalRequest(const RentalRequest& rentedRentalRequests);
     void editMemberRatingScore();
+    void acceptRequest(RentalRequest request);
+    void RentRequestedMotorbike();
+    void RateRenter();
+    void addCreditPoints();
    // Get the role (type) of the member
     std::string getRole();
-    std::string getCity();
+    std::string getCity() const;
     void setCity(std::string city);
 
 private:
@@ -115,8 +119,8 @@ private:
     double ratingScores;
 
     Motorbike motorbikes;
-    std::vector<RentalRequest> rentalRequests; // chua incoming request, minh htue cua nguoi ta, nguoi ta danh gia minh
-    std::vector<RentalRequest> rentedRentalRequests; // chua request cua user, nguoi ta thue cua minh, nguoi ta danh gia xe
+    std::vector<RentalRequest> rentalRequests; // chua incoming request, ngta thue cua minh, nguoi ta danh gia xe, minh la motorbike owner
+    std::vector<RentalRequest> rentedRentalRequests; // chua request cua minh`, request history, minh thue cua ngta, ngta danh gia minh, minh la renter
 
 };
 

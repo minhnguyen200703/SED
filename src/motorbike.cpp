@@ -1,16 +1,37 @@
 // Motorbike.cpp
-#include "Motorbike.h"
-#include "Member.h" // Include the Member header to access member-related functionality
+#include "../include/motorbike.h"
+#include "../include/member.h" // Include the Member header to access member-related functionality
 
 // for creating new motorbike
 Motorbike::Motorbike(std::string model, std::string color, double engineSize, std::string transmissionMode,
-                     int yearMade, std::string description, int consumingPoint, Member* member)
+                     int yearMade, std::string description, Member* member)
     : model(model), color(color), engineSize(engineSize), transmissionMode(transmissionMode),
-      yearMade(yearMade), description(description), availability(false), consumingPoint(consumingPoint), 
-      availablePeriods(), // Provide default TimePeriod values
-      minimumRenterRating(0), owner(member) {
+      yearMade(yearMade), description(description), availability(false), consumingPoint(), 
+      availablePeriods(), minimumRenterRating(), owner(member), ratingScores() {
     
 }
+
+// for existed motorbike with availability false
+    
+    
+Motorbike::Motorbike(std::string model, std::string color, double engineSize, std::string transmissionMode,
+    int yearMade, std::string description, Member* member, double ratingScores)
+    : model(model), color(color), engineSize(engineSize), transmissionMode(transmissionMode),
+      yearMade(yearMade), description(description), availability(false), consumingPoint(), 
+      availablePeriods(), minimumRenterRating(), owner(member), ratingScores(ratingScores) {
+    
+}
+
+            // for existed motorbike with availability true
+Motorbike::Motorbike(std::string model, std::string color, double engineSize, std::string transmissionMode,
+    int yearMade, std::string description, int consumingPoint, std::vector<TimePeriod> availablePeriod, int minimumRenterRating,
+    Member* member, double ratingScores)
+    : model(model), color(color), engineSize(engineSize), transmissionMode(transmissionMode),
+      yearMade(yearMade), description(description), availability(true), consumingPoint(consumingPoint), 
+      availablePeriods(availablePeriod), minimumRenterRating(minimumRenterRating), owner(member), ratingScores(ratingScores) {
+    
+}
+    
 
 
 
@@ -18,29 +39,6 @@ Motorbike::Motorbike() {
     
 }
 
-
-
-void Motorbike::rentMotorbike(Member& renter, TimePeriod period) {
-    // Implement renting a motorbike
-    // You may need to update availability, rental details, and owner information.
-    
-    // Check if the motorbike is available for the specified rental period
-    if (!availability || !periodIsValid(period)) {
-        // Handle unavailability or invalid rental period
-        // You can return an error or take appropriate actions here.
-        return;
-    }
-
-    // Update availability status and rental details
-    setRentalDetails(period);
-
-    // Set the renter as the owner during the rental period
-    setOwner(&renter);
-}
-
-std::string Motorbike::getLocation() const {
-    return owner->getCity();
-}
 
 void Motorbike::viewMotorbikeDetails(int index) const {
     std::cout << "Index: " << index << std::endl;
@@ -102,12 +100,12 @@ bool Motorbike::periodIsValid(const TimePeriod& period) const {
     return false;
 }
 
-void Motorbike::editMotorbikeRatingScore(std::vector<RentalRequest> rentalRequests) {
+void Motorbike::editMotorbikeRatingScore() {
     int totalScore = 0;
     int numberOfReviews = 0;
 
     // Loop through the rentedRentalRequests
-    for (const RentalRequest& request : rentalRequests) {
+    for (const RentalRequest& request : owner->getRentedRentalRequests()) {
         if (request.getStatus() == "Rented") {
             // Get the renterReview from each rented rental request
             Review renterReview = request.getRenterReview();
@@ -250,6 +248,29 @@ void Motorbike::setRatingScores(double newRatingScores) {
 void Motorbike::setAvailablePeriods(std::vector<TimePeriod> newRentalPeriods) {
     availablePeriods = newRentalPeriods;
 };
+
+std::string Motorbike::getMotorbikeDetails() const {
+    std::string details = "Model: " + getModel() + "\n";
+    details += "Color: " + getColor() + "\n";
+    details += "Engine Size: " + std::to_string(getEngineSize()) + " cc\n";
+    details += "Transmission Mode: " + getTransmissionMode() + "\n";
+    details += "Year Made: " + std::to_string(getYearMade()) + "\n";
+    details += "Description: " + getDescription() + "\n";
+    
+    details += "Availability: " + (isAvailable() ? std::string("Available") : std::string("Not Available")) + "\n";
+    details += "Minimum Renter Rating: " + std::to_string(getMinimumRenterRating()) + "\n";
+    details += "Consuming Point: " + std::to_string(getConsumingPoint()) + "\n";
+    details += "Owner: " + getOwner()->getFullName() + "\n";
+    details += "Rating Scores: " + std::to_string(getRatingScores()) + "\n";
+
+    return details;
+}
+
+
+
+
+
+
 
 
 

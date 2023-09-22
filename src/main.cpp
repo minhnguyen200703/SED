@@ -2,19 +2,22 @@
 #include <fstream>
 #include <vector>
 #include <string>
-#include "Account.h"       // Include your member class header file
-#include "Member.h"        // Include your member class header file
-#include "Motorbike.h"     // Include your motorbike class header file
-#include "Admin.h"         // Include your admin class header file
-#include "RentalRequest.h" // Include your Location class header file
+#include "../include/account.h"       // Include your member class header file
+#include "../include/member.h"        // Include your member class header file
+#include "../include/motorbike.h"     // Include your motorbike class header file
+#include "../include/admin.h"         // Include your admin class header file
+#include "../include/rentalRequest.h" // Include your Location class header file
+#include <cstdlib>
+#include <sstream> // Include the <sstream> header
 
 using namespace std;
 
 class MotorbikeRentalApp
 {
 private:
-    vector<Member> members;       // Vector to store member objects
-    vector<Motorbike> motorbikes; // Vector to store motorbike objects
+    vector<Member> members;               // Vector to store member objects
+    vector<Motorbike> motorbikes;         // Vector to store motorbike objects
+    vector<RentalRequest> rentalRequests; // Vector to store motorbike objects
 
     Admin admin;
 
@@ -30,6 +33,7 @@ public:
         int choice;
         do
         {
+            loadData();
             displayWelcomeScreen();
             cout << "Enter your choice: ";
             cin >> choice;
@@ -60,30 +64,7 @@ public:
 
     // Add member, motorbike, and admin management functions here
 
-    void loadData()
-    {
-        // Load data from the appdata.txt file into members, motorbikes, and admin
-        ifstream file("appdata.txt");
-        if (file.is_open())
-        {
-            // Read data and create objects
-            // Populate members and motorbikes vectors
-            // Initialize admin object
-            file.close();
-        }
-    }
-
-    void saveData()
-    {
-        // Save data from members, motorbikes, and admin to the appdata.txt file
-        ofstream file("appdata.txt");
-        if (file.is_open())
-        {
-            // Write data for members and motorbikes
-            // Write data for admin
-            file.close();
-        }
-    }
+    
 
     void displayWelcomeScreen()
     {
@@ -134,6 +115,7 @@ public:
             case 3:
             {
                 // Exit the guest menu
+                saveData();
                 return;
             }
             default:
@@ -188,9 +170,9 @@ public:
             std::cout << "7. View My requests\n";
             std::cout << "8. Accept a Request\n";
             std::cout << "9. Rent Requested Motorbike\n";
-            std::cout << "10. Rate Rented Motorbike\n";
-            std::cout << "11. Rate Renters\n";
-            std::cout << "12. View all motorbikes\n";
+            std::cout << "10. Rate Renters\n";
+            std::cout << "11. View all motorbikes\n";
+            std::cout << "12. Add credit points\n";
             std::cout << "0. Logout\n";
             std::cout << "Enter your choice: ";
             std::cin >> choice;
@@ -198,44 +180,50 @@ public:
             switch (choice)
             {
             case 1:
-            // View information
+                // View information
                 currentMember.viewMemberInfo();
                 break;
             case 2:
-            // List motorbike
+                // List motorbike
                 currentMember.listMotorbike();
                 break;
             case 3:
-            // Unlist motorbike
+                // Unlist motorbike
                 currentMember.unlistMotorbike();
                 break;
-            case 4:   
-            // Search Motorbike
+            case 4:
+                // Search Motorbike
                 searchMotorbike(currentMember);
                 break;
             case 5:
-            // Request to rent motorbike
-                // Implement requesting to rent a motorbike
-                // You can prompt the member for details and handle the request.
+                // Request to rent motorbike
+                rentMotorbike(currentMember);
                 break;
             case 6:
-                currentMember.viewRequests("1"); // View all rental requests
+                currentMember.viewRequests("1"); // View all imcoming rental requests
                 break;
             case 7:
-                // Implement accepting a request (rejecting others)
-                // You can prompt the member to select a request to accept.
+                currentMember.viewRequests("2"); // View my requests
                 break;
             case 8:
-                // Implement renting the requested motorbike
+                viewAndAcceptRentalRequest(currentMember);
                 // You can prompt the member to confirm the rental.
                 break;
             case 9:
                 // Implement rating a rented motorbike
-                // You can prompt the member to select a motorbike to rate.
+                currentMember.RentRequestedMotorbike();
                 break;
             case 10:
-                // Implement rating renters (members who rented the member's motorbike)
-                // You can prompt the member to select a renter to rate.
+                currentMember.RateRenter();
+                break;
+            case 11:
+                listMotorbike();
+
+                break;
+
+            case 12:
+                currentMember.addCreditPoints();
+
                 break;
             case 0:
                 std::cout << "Logging out..." << std::endl;
@@ -279,10 +267,11 @@ public:
         std::cout << "All Available Motorbike Details:" << std::endl;
         for (const Motorbike &motorbike : motorbikes)
         {
-            if (motorbike.getAvailability()) {
+            if (motorbike.getAvailability())
+            {
                 motorbike.viewMotorbikeDetails(index);
             }
-                index ++;
+            index++;
         }
     }
 
@@ -292,10 +281,11 @@ public:
         std::cout << "All Available Motorbike Details:" << std::endl;
         for (const Motorbike &motorbike : motorbikes)
         {
-            if (motorbike.getAvailability()) {
+            if (motorbike.getAvailability())
+            {
                 motorbike.viewMotorbikeDetailsWithReview(index);
             }
-                index ++;
+            index++;
         }
     }
 
@@ -304,127 +294,469 @@ public:
         int index = 1;
         std::string city;
 
-
-
         std::cout << "Please enter the city: ";
         std::getline(std::cin, city);
 
         std::cout << "All Available Motorbike Details in " << city << " that fit your credit points and rating score:" << std::endl;
         for (const Motorbike &motorbike : motorbikes)
         {
-            if (motorbike.getLocation() == city 
-                && (motorbike.getConsumingPoint() <= member.getCreditPoints())
-                && (motorbike.getMinimumRenterRating() <= member.getRatingScores())
-                && motorbike.getAvailability()
-                )
+            if (motorbike.getLocation() == city && (motorbike.getConsumingPoint() <= member.getCreditPoints()) && (motorbike.getMinimumRenterRating() <= member.getRatingScores()) && motorbike.getAvailability())
             {
                 motorbike.viewMotorbikeDetailsWithReview(index);
             }
-                index++;
+            index++;
         }
     }
 
     void rentMotorbike(Member member)
+    {
+        // Step 1: List available motorbikes
+        searchMotorbike(member);
+
+        // Step 2: Ask the user to choose a motorbike by index
+        int motorbikeIndex;
+        std::cout << "Enter the index of the motorbike you want to rent: ";
+        std::cin >> motorbikeIndex;
+        motorbikeIndex--;
+
+        // Validate the user's input
+        if (motorbikeIndex < 0 || motorbikeIndex >= motorbikes.size())
+        {
+            std::cout << "Invalid motorbike index. Please try again." << std::endl;
+            return;
+        }
+
+        Motorbike &selectedMotorbike = motorbikes[motorbikeIndex];
+
+        // Step 3: Display the maximum rental duration allowed
+        int maxRentalDays = div(member.getCreditPoints(), selectedMotorbike.getConsumingPoint()).quot;
+
+        std::cout << "Maximum rental duration allowed for this motorbike: " << maxRentalDays << " days" << std::endl;
+
+        // Step 4: Ask the user for the rental period (start date and end date)
+        DateTime startDate, endDate;
+        std::cout << "Enter the start date (YYYY-MM-DD): ";
+        std::string startDateStr;
+        std::cin >> startDateStr;
+
+        // Validate and parse the start date
+        if (!startDate.parseDateTime(startDateStr))
+        {
+            std::cout << "Invalid date format. Please use YYYY-MM-DD format." << std::endl;
+            return;
+        }
+
+        std::cout << "Enter the end date (YYYY-MM-DD): ";
+        std::string endDateStr;
+        std::cin >> endDateStr;
+
+        // Validate and parse the end date
+        if (!endDate.parseDateTime(endDateStr))
+        {
+            std::cout << "Invalid date format. Please use YYYY-MM-DD format." << std::endl;
+            return;
+        }
+
+        // Step 5: Create a TimePeriod based on the start and end dates
+        TimePeriod rentalPeriod(startDate, endDate);
+
+        // Step 6: Check if the motorbike is available for the specified rental period
+
+        if (!selectedMotorbike.isAvailable() || !selectedMotorbike.periodIsValid(rentalPeriod))
+        {
+            std::cout << "Motorbike is not available for the specified rental period or the period is invalid." << std::endl;
+            return;
+        }
+
+        // Step 7: Calculate the total rental fee based on the rental period
+        int totalFee = selectedMotorbike.getConsumingPoint() * rentalPeriod.getNumberOfDays();
+
+        // Step 8: Check if the user can afford the rental
+        if (member.getCreditPoints() < totalFee)
+        {
+            std::cout << "You do not have enough credit points to rent this motorbike." << std::endl;
+            return;
+        }
+
+        // Step 9: Check if the user has a high enough rating
+        if (member.getRatingScores() < selectedMotorbike.getMinimumRenterRating())
+        {
+            std::cout << "You do not have a high enough rating to rent this motorbike." << std::endl;
+            return;
+        }
+
+        // Step 10: Send a rental request
+        bool requestSent = member.requestToRentMotorbike(selectedMotorbike, rentalPeriod);
+
+        if (requestSent)
+        {
+            std::cout << "Rental request sent successfully." << std::endl;
+        }
+        else
+        {
+            std::cout << "An error has occured." << std::endl;
+        }
+    }
+
+    void viewAndAcceptRentalRequest(Member &currentMember)
+    {
+
+        std::cout << "List of pending Rental Requests:" << std::endl;
+
+        // Display the list of rental requests with indices
+        currentMember.viewRentalRequests("1", "Pending");
+
+        // Prompt the user to select a rental request
+        std::cout << "Enter the index of the rental request you want to accept: ";
+        int selectedIndex;
+        std::cin >> selectedIndex;
+
+        // Check if the selected index is valid
+        if (selectedIndex >= 1 && selectedIndex <= static_cast<int>(currentMember.getRentalRequests().size()))
+        {
+            // Display the details of the selected rental request
+            currentMember.getRentalRequests()[selectedIndex - 1].displayRequestDetails(); // You should implement this function in RentalRequest class
+            std::cout << "Do you really want to accept this request?\n All other request that overlap on this request will be deleted! (Y/N)" << std::endl;
+            std::string choice;
+            std::cin >> choice;
+            if (choice == "Y")
+            {
+                currentMember.acceptRequest(currentMember.getRentalRequests()[selectedIndex - 1]);
+                std::cout << "Request accepted. All other overlapped requests have been denied!" << std::endl;
+            }
+            else
+            {
+                std::cout << "Returning to main menu..." << std::endl;
+            }
+        }
+        else
+        {
+            std::cout << "Invalid selection. Please enter a valid index." << std::endl;
+        }
+    }
+
+    void MotorbikeRentalApp::loadData()
+    {
+        // Load data from the member.txt file into the members vector
+        ifstream memberFile("../data/member.txt");
+        if (memberFile.is_open())
+        {
+            string line;
+            while (getline(memberFile, line))
+            {
+                // Split the line into fields
+                vector<string> fields;
+                string field;
+                istringstream lineStream(line);
+                while (getline(lineStream, field, '|'))
+                {
+                    fields.push_back(field);
+                }
+
+                if (fields.size() == 13)
+                {
+                    // Assuming your Member class has a constructor that takes these fields as parameters
+                    Member member(fields[0], fields[1], fields[2], fields[3], fields[4], fields[5], fields[6], fields[7],
+                                  fields[8], fields[9], fields[10], stoi(fields[11]), stod(fields[12]));
+                    members.push_back(member);
+                }
+                else
+                {
+                    cerr << "Invalid data in member.txt: " << line << endl;
+                }
+            }
+            memberFile.close();
+        }
+        else
+        {
+            cerr << "Error opening member.txt" << endl;
+        }
+
+        // Load data from the motorbike.txt file into the motorbikes vector
+        ifstream motorbikeFile("../data/motorbike.txt");
+        if (motorbikeFile.is_open())
+        {
+            string line;
+            while (getline(motorbikeFile, line))
+            {
+                // Split the line into fields
+                vector<string> fields;
+                string field;
+                istringstream lineStream(line);
+                while (getline(lineStream, field, '|'))
+                {
+                    fields.push_back(field);
+                }
+
+                if (fields.size() == 11 && fields[8] == "true")
+                {
+                    Member *foundMember = nullptr;
+                    for (Member &member : members)
+                    {
+                        if (member.getId() == fields[0])
+                        {
+                            foundMember = &member;
+                            break;
+                        }
+                    };
+
+                    // Parse and add time periods
+                    vector<TimePeriod> timePeriods;
+                    istringstream timePeriodStream(fields[9]);
+                    string timePeriod;
+                    while (getline(timePeriodStream, timePeriod, ';'))
+                    {
+                        vector<string> dateParts;
+                        istringstream dateStream(timePeriod);
+                        string datePart;
+                        vector<int> dateValues;
+                        while (getline(dateStream, datePart, ','))
+                        {
+                            dateValues.push_back(stoi(datePart));
+                        }
+                        if (dateValues.size() == 6)
+                        {
+                            DateTime startDate(dateValues[0], dateValues[1], dateValues[2]);
+                            DateTime endDate(dateValues[3], dateValues[4], dateValues[5]);
+                            TimePeriod period(startDate, endDate);
+                            timePeriods.push_back(period);
+                        }
+                    }
+                    Motorbike motorbike(fields[1], fields[2], stod(fields[3]), fields[4], stoi(fields[5]),
+                                        fields[6], stoi(fields[11]), timePeriods, stoi(fields[10]), foundMember, stod(fields[7]));
+                    foundMember->setMotorbikes(motorbike);
+
+                    motorbikes.push_back(motorbike);
+                }
+                else if (fields.size() == 9 && fields[8] == "false")
+                {
+                    Member *foundMember = nullptr;
+                    for (Member &member : members)
+                    {
+                        if (member.getId() == fields[0])
+                        {
+                            foundMember = &member;
+                            break;
+                        }
+                    };
+
+                    Motorbike motorbike(fields[1], fields[2], stod(fields[3]), fields[4], stoi(fields[5]),
+                                        fields[6], foundMember, stod(fields[7]));
+                    foundMember->setMotorbikes(motorbike);
+                    motorbikes.push_back(motorbike);
+                }
+                {
+                    cerr << "Invalid data in motorbike.txt: " << line << endl;
+                }
+            }
+            motorbikeFile.close();
+        }
+        else
+        {
+            cerr << "Error opening motorbike.txt" << endl;
+        }
+
+        // Load data from the rentalrequests.txt file into the rentalRequests vector
+        ifstream rentalRequestsFile("../data/rentalrequests.txt");
+        if (rentalRequestsFile.is_open())
+        {
+            string line;
+            while (getline(rentalRequestsFile, line))
+            {
+
+                // Split the line into fields
+                vector<string> fields;
+                string field;
+                istringstream lineStream(line);
+                while (getline(lineStream, field, '|'))
+                {
+                    fields.push_back(field);
+                }
+
+                if (fields.size() == 8)
+                {
+                    Member *renter = nullptr;
+                    Member *owner = nullptr;
+                    Motorbike *mtb = nullptr;
+                    for (Member &member : members)
+                    {
+                        if (member.getId() == fields[0])
+                        {
+                            renter = &member;
+                            break;
+                        }
+                        if (member.getId() == fields[1])
+                        {
+                            owner = &member;
+                            mtb = &member.getMotorbikes();
+                            break;
+                        }
+                        if (renter && owner)
+                        {
+                            break;
+                        }
+                    };
+                    // Assuming your RentalRequest class has a constructor that takes these fields as parameters
+
+                    vector<string> dateParts;
+                    istringstream dateStream(fields[2]);
+                    string datePart;
+                    vector<int> dateValues;
+                    TimePeriod period;
+                    while (getline(dateStream, datePart, ','))
+                    {
+                        dateValues.push_back(stoi(datePart));
+                    }
+
+                    if (dateValues.size() == 6)
+                    {
+                        DateTime startDate(dateValues[0], dateValues[1], dateValues[2]);
+                        DateTime endDate(dateValues[3], dateValues[4], dateValues[5]);
+                        period = TimePeriod(startDate, endDate); // Assign the TimePeriod object
+                    }
+                    Review motorbikeReview = Review(stoi(fields[3]), fields[4]);
+                    Review renterReview = Review(stoi(fields[5]), fields[6]);
+
+                    RentalRequest request(*renter, *mtb, period, motorbikeReview, renterReview, fields[7]);
+                    rentalRequests.push_back(request);
+                    renter->addRentalRequest(request);
+                    renter->editRatingScore();
+                    owner->addRentedRentalRequest(request);
+                    mtb->editMotorbikeRatingScore();
+                }
+                else
+                {
+                    cerr << "Invalid data in rentalrequests.txt: " << line << endl;
+                }
+            }
+            rentalRequestsFile.close();
+        }
+        else
+        {
+            cerr << "Error opening rentalrequests.txt" << endl;
+        }
+    }
+
+    void writeMembersToFile(const std::string &filename)
+    {
+        std::ofstream file(filename);
+
+        if (!file.is_open())
+        {
+            std::cerr << "Error opening file: " << filename << std::endl;
+            return;
+        }
+
+        for (const Member &member : members)
+        {
+            file << member.getId() << "|"
+                 << member.getUsername() << "|"
+                 << member.getPassword() << "|"
+                 << member.getSalt() << "|"
+                 << member.getFullName() << "|"
+                 << member.getPhoneNumber() << "|"
+                 << member.getIdType() << "|"
+                 << member.getIdNumber() << "|"
+                 << member.getDriverLicenseNumber() << "|"
+                 << member.getExpiryDate() << "|"
+                 << member.getCity() << "|"
+                 << member.getCreditPoints() << "|"
+                 << member.getRatingScores() << "\n";
+        }
+
+        file.close();
+    }
+
+    void writeMotorbikesToFile(const std::string &filename)
 {
-    // Step 1: List available motorbikes
-    searchMotorbike(member);
+    std::ofstream file(filename);
 
-    // Step 2: Ask the user to choose a motorbike by index
-    int motorbikeIndex;
-    std::cout << "Enter the index of the motorbike you want to rent: ";
-    std::cin >> motorbikeIndex;
-    motorbikeIndex --;
-
-    // Validate the user's input
-    if (motorbikeIndex < 0 || motorbikeIndex >= motorbikes.size())
+    if (!file.is_open())
     {
-        std::cout << "Invalid motorbike index. Please try again." << std::endl;
+        std::cerr << "Error opening file: " << filename << std::endl;
         return;
     }
 
-    Motorbike &selectedMotorbike = motorbikes[motorbikeIndex];
-
-    // Step 3: Display the maximum rental duration allowed
-    int maxRentalDays = selectedMotorbike.getMaxRentalDays();
-    std::cout << "Maximum rental duration allowed for this motorbike: " << maxRentalDays << " days" << std::endl;
-
-    // Step 4: Ask the user for the rental period (start date and end date)
-    DateTime startDate, endDate;
-    std::cout << "Enter the start date (YYYY-MM-DD): ";
-    std::string startDateStr;
-    std::cin >> startDateStr;
-
-    // Validate and parse the start date
-    if (!DateTime::parseDateTime(startDateStr))
+    for (const Motorbike &motorbike : motorbikes)
     {
-        std::cout << "Invalid date format. Please use YYYY-MM-DD format." << std::endl;
-        return;
+        file << motorbike.getOwner()->getId() << "|"
+             << motorbike.getModel() << "|"
+             << motorbike.getColor() << "|"
+             << motorbike.getEngineSize() << "|"
+             << motorbike.getTransmissionMode() << "|"
+             << motorbike.getYearMade() << "|"
+             << motorbike.getDescription() << "|"
+             << motorbike.getRatingScores() << "|";
+
+        if (motorbike.getAvailability())
+        {
+            file << "true|";
+            const std::vector<TimePeriod> &timePeriods = motorbike.getAvailablePeriods();
+            for (const TimePeriod &period : timePeriods)
+            {
+                file << period.getStartDate().getDay() << ","
+                     << period.getStartDate().getMonth() << ","
+                     << period.getStartDate().getYear() << ","
+                     << period.getEndDate().getDay() << ","
+                     << period.getEndDate().getMonth() << ","
+                     << period.getEndDate().getYear();
+                if (&period != &timePeriods.back())
+                {
+                    file << ";";
+                }
+            }
+            file << "|" << motorbike.getMinimumRenterRating() << "|"
+             << motorbike.getConsumingPoint() << "\n";
+        }
+        else
+        {
+            file << "false" << "\n";
+        }
+
+        
     }
 
-    std::cout << "Enter the end date (YYYY-MM-DD): ";
-    std::string endDateStr;
-    std::cin >> endDateStr;
-
-    // Validate and parse the end date
-    if (!DateTime::parseDateTime(endDateStr))
-    {
-        std::cout << "Invalid date format. Please use YYYY-MM-DD format." << std::endl;
-        return;
-    }
-
-    startDate = DateTime::parseDateTime(startDateStr);
-    endDate = DateTime::parseDateTime(endDateStr);
-
-    // Step 5: Create a TimePeriod based on the start and end dates
-    TimePeriod rentalPeriod(startDate, endDate);
-
-    // Step 6: Calculate the total rental fee based on the rental period
-    int totalFee = selectedMotorbike.calculateRentalFee(rentalPeriod);
-
-    // Step 7: Check if the user can afford the rental
-    if (currentAccount.getCreditPoints() < totalFee)
-    {
-        std::cout << "You do not have enough credit points to rent this motorbike." << std::endl;
-        return;
-    }
-
-    // Step 8: Check if the user has a high enough rating
-    if (currentAccount.getRatingScore() < selectedMotorbike.getMinimumRenterRating())
-    {
-        std::cout << "You do not have a high enough rating to rent this motorbike." << std::endl;
-        return;
-    }
-
-    // Step 9: Check if the rental period is within the allowed maximum duration
-    if (rentalPeriod.getNumberOfDays() > maxRentalDays)
-    {
-        std::cout << "The selected rental period exceeds the maximum allowed duration." << std::endl;
-        return;
-    }
-
-    // Step 10: Send a rental request
-    bool requestSent = currentAccount.requestToRentMotorbike(selectedMotorbike, rentalPeriod);
-
-    if (requestSent)
-    {
-        std::cout << "Rental request sent successfully." << std::endl;
-    }
+    file.close();
 }
 
 
+    void writeRentalRequestsToFile(const std::string &filename)
+    {
+        std::ofstream file(filename);
 
+        if (!file.is_open())
+        {
+            std::cerr << "Error opening file: " << filename << std::endl;
+            return;
+        }
 
+        for (const RentalRequest &request : rentalRequests)
+        {
+            file << request.getRequester().getId() << "|"
+                 << request.getMotorbike().getOwner()->getId() << "|"
+                 << request.getRentalPeriod().getStartDate().getDay() << "," 
+                 << request.getRentalPeriod().getStartDate().getMonth() << "," 
+                 << request.getRentalPeriod().getStartDate().getYear() << ","
+                 << request.getRentalPeriod().getEndDate().getDay() << ","
+                 << request.getRentalPeriod().getEndDate().getMonth() << "," 
+                 << request.getRentalPeriod().getEndDate().getYear() << "|"
+                 << request.getMotorbikeReview().getScore() << "|"
+                 << request.getMotorbikeReview().getComment() << "|"
+                 << request.getRenterReview().getScore() << "|"
+                 << request.getRenterReview().getComment() << "|"
+                 << request.getStatus() << "\n";
+        }
 
+        file.close();
+    }
 
-
-
-
-
-
-
-
-
-
+    void saveData()
+    {
+        writeMembersToFile("../data/member.txt");
+        writeMotorbikesToFile("../data/motorbike.txt");
+        writeRentalRequestsToFile("../data/rentalrequest.txt");
+        std::cout << "File loaded!" << std::endl;
+    }
 };
 
 int main()

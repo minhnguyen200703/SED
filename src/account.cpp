@@ -1,6 +1,7 @@
-#include "Account.h"
-#include "Admin.h" // You'll need to create Admin and Customer classes
-#include "member.h" // You'll need to create Admin and Customer classes
+#include "../include/account.h"
+
+#include "../include/admin.h" // You'll need to create Admin and Customer classes
+#include "../include/member.h" // You'll need to create Admin and Customer classes
 
 Account::Account(std::string id, std::string usernameReg, std::string password) {
     this->id = id;

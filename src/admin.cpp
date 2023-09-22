@@ -1,6 +1,6 @@
-#include "Admin.h"
-#include "Member.h"
-#include "Motorbike.h"
+#include "../include/admin.h"
+#include "../include/member.h"
+#include "../include/motorbike.h"
 
 Admin::Admin(std::string id, std::string username, std::string password)
     : Account(id, username, password) {
