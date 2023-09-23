@@ -1,9 +1,12 @@
+#pragma once
+
 #ifndef MOTORBIKE_H
 #define MOTORBIKE_H
 
 #include <string>
 #include <vector>
 #include "../include/timeperiod.h"
+#include "../include/member.h"
 
 class Member;
 class TimePeriod;
@@ -11,7 +14,7 @@ class Motorbike {
 private:
     std::string model;
     std::string color;
-    double engineSize;
+    int engineSize;
     std::string transmissionMode;
     int yearMade;
     std::string description;
@@ -24,13 +27,13 @@ private:
 
 public:
     // Constructor for creating a Motorbike instance
-    Motorbike(std::string model, std::string color, double engineSize, std::string transmissionMode,
+    Motorbike(std::string model, std::string color, int engineSize, std::string transmissionMode,
               int yearMade, std::string description, Member* member);//for creating new
     
-    Motorbike(std::string model, std::string color, double engineSize, std::string transmissionMode,
+    Motorbike(std::string model, std::string color, int engineSize, std::string transmissionMode,
             int yearMade, std::string description, Member* member, double ratingScores); // for existed motorbike with availability false
     
-    Motorbike(std::string model, std::string color, double engineSize, std::string transmissionMode,
+    Motorbike(std::string model, std::string color, int engineSize, std::string transmissionMode,
             int yearMade, std::string description, int consumingPoint, std::vector<TimePeriod> availablePeriod, int minimumRenterRating,
             Member* member, double ratingScores); // for existed motorbike with availability true
     Motorbike(const Motorbike& other);
@@ -69,7 +72,7 @@ public:
     // Getter functions
     std::string getModel() const;
     std::string getColor() const;
-    double getEngineSize() const;
+    int getEngineSize() const;
     std::string getTransmissionMode() const;
     int getYearMade() const;
     std::string getDescription() const;
@@ -83,7 +86,7 @@ public:
     // Setter functions
     void setModel(const std::string& newModel);
     void setColor(const std::string& newColor);
-    void setEngineSize(double newSize);
+    void setEngineSize(int newSize);
     void setTransmissionMode(const std::string& newMode);
     void setYearMade(int newYear);
     void setDescription(const std::string& newDescription);

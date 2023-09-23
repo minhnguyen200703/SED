@@ -4,17 +4,16 @@
 using namespace std;
 
 // for creating new motorbike
-Motorbike::Motorbike(std::string model, std::string color, double engineSize, std::string transmissionMode,
+Motorbike::Motorbike(std::string model, std::string color, int engineSize, std::string transmissionMode,
                      int yearMade, std::string description, Member* member)
     : model(model), color(color), engineSize(engineSize), transmissionMode(transmissionMode),
       yearMade(yearMade), description(description), availability(false), consumingPoint(), 
       availablePeriods(), minimumRenterRating(), owner(member), ratingScores() {
-    
 }
 
 // for existed motorbike with availability false
     
-Motorbike::Motorbike(std::string model, std::string color, double engineSize, std::string transmissionMode,
+Motorbike::Motorbike(std::string model, std::string color, int engineSize, std::string transmissionMode,
     int yearMade, std::string description, Member* member, double ratingScores)
     : model(model), color(color), engineSize(engineSize), transmissionMode(transmissionMode),
       yearMade(yearMade), description(description), availability(false), consumingPoint(), 
@@ -23,7 +22,7 @@ Motorbike::Motorbike(std::string model, std::string color, double engineSize, st
 }
 
             // for existed motorbike with availability true
-Motorbike::Motorbike(std::string model, std::string color, double engineSize, std::string transmissionMode,
+Motorbike::Motorbike(std::string model, std::string color, int engineSize, std::string transmissionMode,
     int yearMade, std::string description, int consumingPoint, std::vector<TimePeriod> availablePeriod, int minimumRenterRating,
     Member* member, double ratingScores)
     : model(model), color(color), engineSize(engineSize), transmissionMode(transmissionMode),
@@ -54,9 +53,9 @@ Motorbike::Motorbike() {
 void Motorbike::viewMotorbikeDetails(int index) const {
     std::cout << "Index: " << index << std::endl;
     std::cout << "Motorbike Details:" << std::endl;
-    std::cout << "Model: " << Motorbike::getModel() << std::endl;
+    std::cout << "Model: " << getModel() << std::endl;
     std::cout << "Color: " << getColor() << std::endl;
-    std::cout << "Engine Size: " << stod(std::to_string(getEngineSize())) << " cc" << std::endl;
+    std::cout << "Engine Size: " << std::to_string(getEngineSize()) << " cc" << std::endl;
     std::cout << "Transmission Mode: " << getTransmissionMode() << std::endl;
     std::cout << "Year Made: " << getYearMade() << std::endl;
     std::cout << "Description: " << getDescription() << std::endl;
@@ -98,17 +97,13 @@ void Motorbike::setAvailability(bool available) {
 }
 
 bool Motorbike::periodIsValid(const TimePeriod& period) const {
-    // Check if the specified rental period is valid based on business rules
-    // For example, you can check if the period falls within any of the available periods
     for (const TimePeriod& availablePeriod : availablePeriods) {
         if (availablePeriod.contains(period)) {
             // The specified period is within an available period, so it's valid
             return true;
         }
     }
-    
-    // If no available period contains the specified period, it's not valid
-    return false;
+        return false;
 }
 
 std::string Motorbike::getLocation() const {
@@ -183,7 +178,7 @@ std::string Motorbike::getColor() const {
     return color;
 }
 
-double Motorbike::getEngineSize() const {
+int Motorbike::getEngineSize() const {
     return engineSize;
 }
 
@@ -233,7 +228,7 @@ void Motorbike::setColor(const std::string& newColor) {
     color = newColor;
 }
 
-void Motorbike::setEngineSize(double newSize) {
+void Motorbike::setEngineSize(int newSize) {
     engineSize = newSize;
 }
 
@@ -266,7 +261,7 @@ void Motorbike::setAvailablePeriods(std::vector<TimePeriod> newRentalPeriods) {
 };
 
 std::string Motorbike::getMotorbikeDetails() const {
-    std::string details = "Model: " + this->Motorbike::getModel() + "\n";
+    std::string details = "Model: " + getModel() + "\n";
     details += "Color: " + getColor() + "\n";
     details += "Engine Size: " + std::to_string(getEngineSize()) + " cc\n";
     details += "Transmission Mode: " + getTransmissionMode() + "\n";

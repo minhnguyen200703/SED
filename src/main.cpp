@@ -25,14 +25,15 @@ class TimePeriod;
 class MotorbikeRentalApp
 {
 private:
-    vector<Member> members;               // Vector to store member objects
-    vector<Motorbike*> motorbikes;         // Vector to store motorbike objects
-    vector<RentalRequest> rentalRequests; // Vector to store motorbike objects
+    vector<Member> members;         // Vector to store member objects
+    vector<Motorbike *> motorbikes; // Vector to store motorbike objects
+    vector<RentalRequest> rentalRequests;
+    Member *currentMember;
+    // Vector to store motorbike objects
 
 public:
     MotorbikeRentalApp()
     {
-        // Load data from the appdata.txt file (if available)
         loadData();
     }
 
@@ -41,7 +42,14 @@ public:
         int choice;
         do
         {
-            // loadData();
+            std::cout << "Request" << std::endl;
+            std::cout << rentalRequests.size() << std::endl;
+
+            for (const RentalRequest rentalRequest : rentalRequests)
+            {
+                rentalRequest.displayRequestDetails();
+            };
+
             displayWelcomeScreen();
             cout << "Enter your choice: ";
             cin >> choice;
@@ -112,8 +120,7 @@ public:
             }
             case 2:
             {
-                // View all motorbike details
-                listMotorbike();
+                listMotorbikes();
                 break;
             }
             case 3:
@@ -136,7 +143,6 @@ public:
         // Login
         std::string username, password;
         bool isLogged = false;
-        Member currentMember;
 
         std::cout << "Please enter your username: ";
         std::cin >> username;
@@ -148,7 +154,7 @@ public:
         {
             if (member.getUsername() == username && member.getPassword() == password)
             {
-                currentMember = member;
+                currentMember = &member; // Store a pointer to the logged-in member
                 isLogged = true;
                 std::cout << "Login successful. Welcome, " << member.getFullName() << "!" << std::endl;
                 member.editMemberRatingScore();
@@ -180,22 +186,26 @@ public:
             std::cout << "11. View all motorbikes\n";
             std::cout << "12. Add credit points\n";
             std::cout << "0. Logout\n";
-            std::cout << "Enter your choice: ";
+            std::cout << "Enter your choice: " << std::endl;
             std::cin >> choice;
 
             switch (choice)
             {
             case 1:
                 // View information
-                currentMember.viewMemberInfo();
+                std::cout << " Hi";
+
+                currentMember->viewMemberInfo();
                 break;
+
             case 2:
-                // List motorbike
-                currentMember.listMotorbike();
+                currentMember->listMotorbike();
+                addMembersMotorbikesToMotorbikesVector();
                 break;
             case 3:
                 // Unlist motorbike
-                currentMember.unlistMotorbike();
+                currentMember->unlistMotorbike();
+                addMembersMotorbikesToMotorbikesVector();
                 break;
             case 4:
                 // Search Motorbike
@@ -206,10 +216,10 @@ public:
                 rentMotorbike(currentMember);
                 break;
             case 6:
-                currentMember.Member::viewRequests("1"); // View all imcoming rental requests
+                currentMember->Member::viewRequests("1"); // View all imcoming rental requests
                 break;
             case 7:
-                currentMember.Member::viewRequests("2"); // View my requests
+                currentMember->Member::viewRequests("2"); // View my requests
                 break;
             case 8:
                 viewAndAcceptRentalRequest(currentMember);
@@ -217,24 +227,26 @@ public:
                 break;
             case 9:
                 // Implement rating a rented motorbike
-                currentMember.Member::RentRequestedMotorbike();
+                currentMember->Member::RentRequestedMotorbike();
                 break;
             case 10:
-                currentMember.Member::RateRenter();
+                currentMember->Member::RateRenter();
                 break;
             case 11:
-                listMotorbike();
+                listMotorbikes();
 
                 break;
 
             case 12:
-                currentMember.Member::addCreditPoints();
+                currentMember->Member::addCreditPoints();
 
                 break;
             case 0:
                 std::cout << "Logging out..." << std::endl;
                 i = false;
+                std::cout << "Logging out...1" << std::endl;
                 saveData();
+                std::cout << "Logging out...2" << std::endl;
                 break;
             default:
                 std::cout << "Invalid choice. Please try again." << std::endl;
@@ -242,73 +254,74 @@ public:
         } while (i);
     }
 
-   
-
     void handleAdminMenu()
-{
-    // Admin login (you can keep this part as it is)
-    std::string username, password;
-    bool isLogged = false;
-
-    std::cout << "Please enter your username: ";
-    std::cin >> username;
-
-    std::cout << "Please enter your password: ";
-    std::cin >> password;
-
-    if (username == "admin" && password == "admin") {
-        isLogged = true;
-        std::cout << "Login successful. Welcome admin!" << std::endl;
-    }
-    else
     {
-        std::cout << "Login failed. Please check your username and password." << std::endl;
-    }
+        // Admin login (you can keep this part as it is)
+        std::string username, password;
+        bool isLogged = false;
 
-    if (!isLogged)
-    {
-        std::cout << "Returning to menu...." << std::endl;
-        return;
-    }
+        std::cout << "Please enter your username: ";
+        std::cin >> username;
 
-    int choice;
-    bool j = true;
-    while (j)
-    {
-        std::cout << "\nAdmin Menu\n";
-        std::cout << "1. View All Member's Information\n";
-        std::cout << "2. View All Motorbike's Information\n";
-        std::cout << "0. Logout\n";
-        std::cout << "Enter your choice: ";
-        std::cin >> choice;
+        std::cout << "Please enter your password: ";
+        std::cin >> password;
 
-        switch (choice)
+        if (username == "admin" && password == "admin")
         {
-        case 1:
-            // View all member's information
-            viewAllMemberInformation();
-            break;
-        case 2:
-            // View all motorbike's information
-            viewAllMotorbikeInformation();
-            break;
-        case 0:
-            std::cout << "Logging out..." << std::endl;
-            j = false;
-            saveData();
-            break;
-        default:
-            std::cout << "Invalid choice. Please try again." << std::endl;
+            isLogged = true;
+            std::cout << "Login successful. Welcome admin!" << std::endl;
+        }
+        else
+        {
+            std::cout << "Login failed. Please check your username and password." << std::endl;
+        }
+
+        if (!isLogged)
+        {
+            std::cout << "Returning to menu...." << std::endl;
+            return;
+        }
+
+        int choice;
+        bool j = true;
+        while (j)
+        {
+            std::cout << "\nAdmin Menu\n";
+            std::cout << "1. View All Member's Information\n";
+            std::cout << "2. View All Motorbike's Information\n";
+            std::cout << "0. Logout\n";
+            std::cout << "Enter your choice: ";
+            std::cin >> choice;
+
+            switch (choice)
+            {
+            case 1:
+                // View all member's information
+                viewAllMemberInformation();
+                break;
+            case 2:
+                // View all motorbike's information
+                viewAllMotorbikeInformation();
+                break;
+            case 0:
+                std::cout << "Logging out..." << std::endl;
+                j = false;
+                saveData();
+                break;
+            default:
+                std::cout << "Invalid choice. Please try again." << std::endl;
+            }
         }
     }
-}
 
-    void listMotorbike()
+    void listMotorbikes()
     {
         int index = 1;
         std::cout << "All Available Motorbike Details:" << std::endl;
-        for (const Motorbike* motorbike : motorbikes)
+        for (const Motorbike *motorbike : motorbikes)
         {
+            motorbike->Motorbike::viewMotorbikeDetails(index);
+
             if (motorbike->Motorbike::getAvailability())
             {
                 motorbike->Motorbike::viewMotorbikeDetails(index);
@@ -321,7 +334,7 @@ public:
     {
         int index = 1;
         std::cout << "All Available Motorbike Details:" << std::endl;
-        for (const Motorbike* motorbike : motorbikes)
+        for (const Motorbike *motorbike : motorbikes)
         {
             if (motorbike->Motorbike::getAvailability())
             {
@@ -331,26 +344,34 @@ public:
         }
     }
 
-    void searchMotorbike(Member member)
+    void searchMotorbike(Member *member)
     {
         int index = 1;
         std::string city;
-
-        std::cout << "Please enter the city: ";
-        std::getline(std::cin, city);
-
-        std::cout << "All Available Motorbike Details in " << city << " that fit your credit points and rating score:" << std::endl;
-        for (const Motorbike* motorbike : motorbikes)
+        if (motorbikes.size() == 0)
         {
-            if (motorbike->Motorbike::getLocation() == city && (motorbike->Motorbike::getConsumingPoint() <= member.Member::getCreditPoints()) && (motorbike->Motorbike::getMinimumRenterRating() <= member.Member::getRatingScores()) && motorbike->Motorbike::getAvailability())
+            std::cout << "There is no Motorbike at the moment! " << std::endl;
+        }
+        else
+        {
+
+            std::cout << "Please enter the city: ";
+            std::cin.ignore();
+            std::getline(std::cin, city);
+
+            std::cout << "All Available Motorbike Details in " << city << " that fit your credit points and rating score:" << std::endl;
+            for (const Motorbike *motorbike : motorbikes)
             {
-                motorbike->Motorbike::viewMotorbikeDetailsWithReview(index);
+                if (motorbike->Motorbike::getLocation() == city && (motorbike->Motorbike::getConsumingPoint() <= member->Member::getCreditPoints()) && (motorbike->Motorbike::getMinimumRenterRating() <= member->Member::getRatingScores()) && motorbike->Motorbike::getAvailability())
+                {
+                    motorbike->Motorbike::viewMotorbikeDetailsWithReview(index);
+                }
+                index++;
             }
-            index++;
         }
     }
 
-    void rentMotorbike(Member member)
+    void rentMotorbike(Member *member)
     {
         // Step 1: List available motorbikes
         searchMotorbike(member);
@@ -368,10 +389,10 @@ public:
             return;
         }
 
-        Motorbike* selectedMotorbike = motorbikes[motorbikeIndex];
+        Motorbike *selectedMotorbike = motorbikes[motorbikeIndex];
 
         // Step 3: Display the maximum rental duration allowed
-        int maxRentalDays = div(member.Member::getCreditPoints(), selectedMotorbike->Motorbike::getConsumingPoint()).quot;
+        int maxRentalDays = div(member->Member::getCreditPoints(), selectedMotorbike->Motorbike::getConsumingPoint()).quot;
 
         std::cout << "Maximum rental duration allowed for this motorbike: " << maxRentalDays << " days" << std::endl;
 
@@ -406,6 +427,8 @@ public:
 
         if (!selectedMotorbike->isAvailable() || !selectedMotorbike->periodIsValid(rentalPeriod))
         {
+            rentalPeriod.printPeriod();
+
             std::cout << "Motorbike is not available for the specified rental period or the period is invalid." << std::endl;
             return;
         }
@@ -414,21 +437,21 @@ public:
         int totalFee = selectedMotorbike->getConsumingPoint() * rentalPeriod.getNumberOfDays();
 
         // Step 8: Check if the user can afford the rental
-        if (member.getCreditPoints() < totalFee)
+        if (member->getCreditPoints() < totalFee)
         {
             std::cout << "You do not have enough credit points to rent this motorbike." << std::endl;
             return;
         }
 
         // Step 9: Check if the user has a high enough rating
-        if (member.getRatingScores() < selectedMotorbike->getMinimumRenterRating())
+        if (member->getRatingScores() < selectedMotorbike->getMinimumRenterRating())
         {
             std::cout << "You do not have a high enough rating to rent this motorbike." << std::endl;
             return;
         }
 
         // Step 10: Send a rental request
-        bool requestSent = member.requestToRentMotorbike(*selectedMotorbike, rentalPeriod);
+        bool requestSent = member->requestToRentMotorbike(selectedMotorbike, rentalPeriod);
 
         if (requestSent)
         {
@@ -440,13 +463,13 @@ public:
         }
     }
 
-    void viewAndAcceptRentalRequest(Member &currentMember)
+    void viewAndAcceptRentalRequest(Member *currentMember)
     {
 
         std::cout << "List of pending Rental Requests:" << std::endl;
 
         // Display the list of rental requests with indices
-        currentMember.viewRentalRequests("1", "Pending");
+        currentMember->viewRentalRequests("1", "Pending");
 
         // Prompt the user to select a rental request
         std::cout << "Enter the index of the rental request you want to accept: ";
@@ -454,16 +477,16 @@ public:
         std::cin >> selectedIndex;
 
         // Check if the selected index is valid
-        if (selectedIndex >= 1 && selectedIndex <= static_cast<int>(currentMember.getRentalRequests().size()))
+        if (selectedIndex >= 1 && selectedIndex <= static_cast<int>(currentMember->getRentalRequests().size()))
         {
             // Display the details of the selected rental request
-            currentMember.getRentalRequests()[selectedIndex - 1].displayRequestDetails(); // You should implement this function in RentalRequest class
+            currentMember->getRentalRequests()[selectedIndex - 1].displayRequestDetails(); // You should implement this function in RentalRequest class
             std::cout << "Do you really want to accept this request?\n All other request that overlap on this request will be deleted! (Y/N)" << std::endl;
             std::string choice;
             std::cin >> choice;
             if (choice == "Y")
             {
-                currentMember.acceptRequest(currentMember.getRentalRequests()[selectedIndex - 1]);
+                currentMember->setRentalRequests(currentMember->acceptRequest(&currentMember->getRentalRequests()[selectedIndex - 1]));
                 std::cout << "Request accepted. All other overlapped requests have been denied!" << std::endl;
             }
             else
@@ -527,11 +550,13 @@ public:
                 istringstream lineStream(line);
                 while (getline(lineStream, field, '|'))
                 {
+
                     fields.push_back(field);
                 }
 
-                if (fields.size() == 11 && fields[8] == "true")
+                if (fields.size() == 12)
                 {
+
                     Member *foundMember = nullptr;
                     for (Member &member : members)
                     {
@@ -566,12 +591,13 @@ public:
                     }
                     Motorbike motorbike(fields[1], fields[2], stod(fields[3]), fields[4], stoi(fields[5]),
                                         fields[6], stoi(fields[11]), timePeriods, stoi(fields[10]), foundMember, stod(fields[7]));
-                    foundMember->setMotorbikes(motorbike);
+                    foundMember->setMotorbike(motorbike);
 
                     motorbikes.push_back(&motorbike);
                 }
-                else if (fields.size() == 9 && fields[8] == "false")
+                else if (fields.size() == 9)
                 {
+
                     Member *foundMember = nullptr;
                     for (Member &member : members)
                     {
@@ -582,11 +608,12 @@ public:
                         }
                     };
 
-                    Motorbike motorbike(fields[1], fields[2], stod(fields[3]), fields[4], stoi(fields[5]),
-                                        fields[6], foundMember, stod(fields[7]));
-                    foundMember->setMotorbikes(motorbike);
-                    motorbikes.push_back(&motorbike);
+                    Motorbike *motorbike = new Motorbike(fields[1], fields[2], stod(fields[3]), fields[4], stoi(fields[5]),
+                                                         fields[6], foundMember, stod(fields[7]));
+                    foundMember->setMotorbike(*motorbike);
+                    motorbikes.push_back(motorbike);
                 }
+                else
                 {
                     cerr << "Invalid data in motorbike.txt: " << line << endl;
                 }
@@ -602,9 +629,11 @@ public:
         ifstream rentalRequestsFile("./data/rentalrequest.txt");
         if (rentalRequestsFile.is_open())
         {
+            std::cout << "test1" << std::endl;
             string line;
             while (getline(rentalRequestsFile, line))
             {
+                std::cout << "rentalRequestsFile" << std::endl;
 
                 // Split the line into fields
                 vector<string> fields;
@@ -612,20 +641,23 @@ public:
                 istringstream lineStream(line);
                 while (getline(lineStream, field, '|'))
                 {
+                    std::cout << field << std::endl;
+
                     fields.push_back(field);
                 }
 
-                if (fields.size() == 8)
+                if (fields.size() == 9)
                 {
+
                     Member renter;
                     Member owner;
                     for (auto &member : members)
                     {
-                        if (member.getId() == fields[0])
+                        if (member.getId() == fields[1])
                         {
                             renter = member;
                         }
-                        if (member.getId() == fields[1])
+                        if (member.getId() == fields[2])
                         {
                             owner = member;
                         }
@@ -633,7 +665,7 @@ public:
                     // Assuming your RentalRequest class has a constructor that takes these fields as parameters
 
                     vector<string> dateParts;
-                    istringstream dateStream(fields[2]);
+                    istringstream dateStream(fields[3]);
                     string datePart;
                     vector<int> dateValues;
                     TimePeriod period;
@@ -644,19 +676,22 @@ public:
 
                     if (dateValues.size() == 6)
                     {
-                        DateTime startDate(dateValues[0], dateValues[1], dateValues[2]);
-                        DateTime endDate(dateValues[3], dateValues[4], dateValues[5]);
+                        DateTime startDate(dateValues[2], dateValues[1], dateValues[0]);
+                        DateTime endDate(dateValues[5], dateValues[4], dateValues[3]);
                         period = TimePeriod(startDate, endDate); // Assign the TimePeriod object
                     }
-                    Review motorbikeReview = Review(stoi(fields[3]), fields[4]);
-                    Review renterReview = Review(stoi(fields[5]), fields[6]);
+                    Review motorbikeReview = Review(stoi(fields[4]), fields[5]);
+                    Review renterReview = Review(stoi(fields[6]), fields[7]);
 
-                    RentalRequest request(renter, *owner.getMotorbikes(), period, motorbikeReview, renterReview, fields[7]);
+                    RentalRequest request(fields[0], renter, owner.getMotorbike(), period, motorbikeReview, renterReview, fields[8]);
+
+                    request.displayRequestDetails();
+
                     rentalRequests.push_back(request);
                     renter.addRentalRequest(request);
                     renter.editMemberRatingScore();
                     owner.addRentedRentalRequest(request);
-                    owner.getMotorbikes()->editMotorbikeRatingScore();
+                    owner.getMotorbike()->editMotorbikeRatingScore();
                 }
                 else
                 {
@@ -669,11 +704,13 @@ public:
         {
             cerr << "Error opening rentalrequests.txt" << endl;
         }
+        addMembersMotorbikesToMotorbikesVector();
+        // getAllRequests();
     }
 
     void writeMembersToFile(const std::string &filename)
     {
-        std::ofstream file(filename);
+        std::ofstream file(filename, std::ios::trunc);
 
         if (!file.is_open())
         {
@@ -703,7 +740,7 @@ public:
 
     void writeMotorbikesToFile(const std::string &filename)
     {
-        std::ofstream file(filename);
+        std::ofstream file(filename, std::ios::trunc);
 
         if (!file.is_open())
         {
@@ -711,10 +748,10 @@ public:
             return;
         }
 
-        for (const Motorbike* motorbike : motorbikes)
+        for (const Motorbike *motorbike : motorbikes)
         {
             file << motorbike->getOwner()->getId() << "|"
-                 << motorbike->Motorbike::getModel() << "|"
+                 << motorbike->getModel() << "|"
                  << motorbike->getColor() << "|"
                  << motorbike->getEngineSize() << "|"
                  << motorbike->getTransmissionMode() << "|"
@@ -754,17 +791,23 @@ public:
 
     void writeRentalRequestsToFile(const std::string &filename)
     {
-        std::ofstream file(filename);
+        std::ofstream file(filename, std::ios::trunc);
+        std::cout << "Hi1" << std::endl;
 
         if (!file.is_open())
         {
+            std::cout << "Hi2" << std::endl;
             std::cerr << "Error opening file: " << filename << std::endl;
             return;
         }
 
         for (const RentalRequest &request : rentalRequests)
+
         {
-            file << request.getRequester().getId() << "|"
+            std::cout << "Hi33" << std::endl;
+
+            file << request.getId() << "|"
+                 << request.getRequester().getId() << "|"
                  << request.getMotorbike().getOwner()->getId() << "|"
                  << request.getRentalPeriod().getStartDate().getDay() << ","
                  << request.getRentalPeriod().getStartDate().getMonth() << ","
@@ -784,10 +827,17 @@ public:
 
     void saveData()
     {
+        // getAllRequests();
         writeMembersToFile("./data/member.txt");
+        std::cout << "./data/member.txt" << std::endl;
+
         writeMotorbikesToFile("./data/motorbike.txt");
-        writeRentalRequestsToFile("../data/rentalrequest.txt");
-        std::cout << "File loaded!" << std::endl;
+        std::cout << "./data/motorbike.txt" << std::endl;
+
+        writeRentalRequestsToFile("./data/rentalrequest.txt");
+        std::cout << "./data/rentalrequest.txt" << std::endl;
+
+        std::cout << "File saved!" << std::endl;
     }
 
     void viewAllMemberInformation()
@@ -804,7 +854,7 @@ public:
     {
         std::cout << "All Motorbike Information:" << std::endl;
         int index = 1;
-        for (const Motorbike* motorbike : motorbikes)
+        for (const Motorbike *motorbike : motorbikes)
         {
             motorbike->viewMotorbikeDetailsWithReview(index);
             std::cout << std::endl;
@@ -813,81 +863,117 @@ public:
     }
 
     void registerMember()
-{
-    // You should prompt the user to enter necessary information and store it securely.
-    std::string id, username, password, fullName, phoneNumber, idType, idNumber, driverLicenseNumber, expiryDate;
-
-    // Prompt the user to enter registration details
-    std::cout << "Enter Member ID: ";
-    std::cin >> id;
-
-    // Check if the entered username already exists
-    bool usernameExists = false;
-    do
     {
-        std::cout << "Enter Username: ";
-        std::cin >> username;
-        usernameExists = false;
+        // You should prompt the user to enter necessary information and store it securely.
+        std::string username, password, fullName, phoneNumber, idType, idNumber, driverLicenseNumber, expiryDate, city;
 
-
-        // Loop through existing members to check if the username exists
-        for (const Member &existingMember : members)
+        // Check if the entered username already exists
+        bool usernameExists = false;
+        do
         {
-            if (existingMember.Account::getUsername() == username)
+            std::cout << "Enter Username: ";
+            std::cin >> username;
+            usernameExists = false;
+
+            // Loop through existing members to check if the username exists
+            for (const Member &existingMember : members)
             {
-                std::cout << "Username already exists. Please choose a different username." << std::endl;
-                usernameExists = true;
-                break;
+                if (existingMember.Account::getUsername() == username)
+                {
+                    std::cout << "Username already exists. Please choose a different username." << std::endl;
+                    usernameExists = true;
+                    break;
+                }
+            }
+        } while (usernameExists);
+
+        std::cout << "Enter Password: ";
+        std::cin >> password; // You can use a password validation function here.
+
+        std::cout << "Enter Full Name: " << std::endl;
+        std::cin.ignore();
+        std::getline(std::cin, fullName);
+        std::cout << "Enter Phone Number: " << std::endl;
+        std::cin >> phoneNumber;
+        std::cout << "Enter ID Type (Passport/CitizenID): " << std::endl;
+        std::cin >> idType;
+        std::cout << "Enter ID Number: " << std::endl;
+        std::cin >> idNumber;
+        std::cout << "Enter Driver License Number: " << std::endl;
+        std::cin >> driverLicenseNumber;
+        std::cout << "Enter Expiry Date: " << std::endl;
+        std::cin >> expiryDate;
+        std::cout << "Enter City: " << std::endl;
+        std::cin >> city;
+
+        // Create a Member object with the provided information
+        Member newMember(username, password, fullName, phoneNumber, idType, idNumber, driverLicenseNumber, expiryDate, city);
+
+        // Store the member data or perform any necessary operations
+        members.push_back(newMember);
+
+        std::cout << "Member registration completed. You have 20 credit points" << std::endl;
+        std::cout << "Adding motorbike..." << std::endl;
+        newMember.addMotorbike();
+        Motorbike *newMotorbike = newMember.getMotorbike();
+
+        motorbikes.push_back(newMotorbike);
+        saveData();
+    }
+
+    void addMembersMotorbikesToMotorbikesVector()
+    {
+        motorbikes.clear();
+        for (Member &member : members)
+        {
+            Motorbike *motorbike = member.getMotorbike();
+            if (motorbike)
+            {
+                motorbikes.push_back(motorbike);
             }
         }
-    } while (usernameExists);
-
-    std::cout << "Enter Password: ";
-    std::cin >> password; // You can use a password validation function here.
-
-    std::cout << "Enter Full Name: ";
-    std::cin.ignore();
-    std::getline(std::cin, fullName);
-    std::cout << "Enter Phone Number: ";
-    std::cin >> phoneNumber;
-    std::cout << "Enter ID Type: (Passport/CitizenID)";
-    std::cin >> idType;
-    std::cout << "Enter ID Number: ";
-    std::cin >> idNumber;
-    std::cout << "Enter Driver License Number: ";
-    std::cin >> driverLicenseNumber;
-    std::cout << "Enter Expiry Date: ";
-    std::cin >> expiryDate;
-
-    // Create a Member object with the provided information
-    Member newMember(id, username, password, fullName, phoneNumber, idType, idNumber, driverLicenseNumber, expiryDate);
-
-    // Store the member data or perform any necessary operations
-    members.push_back(newMember);
-
-    std::cout << "Member registration completed. You have 20 credit points" << std::endl;
-    std::cout << "Adding motorbike..." << std::endl;
-    newMember.addMotorbike();
-    newMember.getMotorbikes()->viewMotorbikeDetails(1);
-    Motorbike* newMotorbike = newMember.getMotorbikes();
-
-
-    motorbikes.push_back(newMotorbike);
-    for (const Motorbike* motorbike : motorbikes) {
-        // Check if the pointer is not null (for safety)
-        if (motorbike) {
-            // Use the pointer to access and print the Motorbike's details
-            motorbike->viewMotorbikeDetails(1);
-        }
     }
-}
+
+    // void getAllRequests()
+    // {
+    //     rentalRequests.clear();
+
+    //     for (const Member &member : members)
+    //     {
+    //         // Loop through the rental requests of the current member
+    //         for (const RentalRequest &request : member.getRentalRequests())
+    //         {
+    //             rentalRequests.push_back(request);
+    //         }
+
+    //         // Loop through the rentedRentalRequests of the current member
+    //         for (const RentalRequest &request : member.getRentedRentalRequests())
+    //         {
+    //             // Check if the request's ID is not already in rentalRequests
+    //             bool isDuplicate = false;
+    //             for (const RentalRequest &existingRequest : rentalRequests)
+    //             {
+    //                 if (request.getId() == existingRequest.getId())
+    //                 {
+    //                     isDuplicate = true;
+    //                     break;
+    //                 }
+    //             }
+
+    //             // If it's not a duplicate, add it to rentalRequests
+    //             if (!isDuplicate)
+    //             {
+    //                 rentalRequests.push_back(request);
+    //             }
+    //         }
+    //     }
+    // }
 };
 
 int main()
 {
     MotorbikeRentalApp app;
     app.run();
-    
 
     return 0;
 }

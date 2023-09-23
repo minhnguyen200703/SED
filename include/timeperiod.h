@@ -28,6 +28,7 @@ public:
         const TimePeriod& rentingPeriod
     ) const;
     int getNumberOfDays() const;
+    void printPeriod() const;
 
 };
 

@@ -28,6 +28,11 @@ bool TimePeriod::contains(const TimePeriod& other) const {
     return startsAfterBegin && endsBeforeEnd;
 }
 
+void TimePeriod::printPeriod() const {
+    std::cout << "Start Date: " << startDate.getYear() << "-" << startDate.getMonth() << "-" << startDate.getDay() << std::endl;
+    std::cout << "End Date: " << endDate.getYear() << "-" << endDate.getMonth() << "-" << endDate.getDay() << std::endl;
+}
+
 
 bool TimePeriod::overlapsWith(const TimePeriod& other) const {
     // Check if two time periods overlap

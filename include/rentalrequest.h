@@ -16,11 +16,12 @@ private:
     Review motorbikeReview;
     Review renterReview;
     std::string status;
+    std::string id;
 
 public:
     // Constructors
-    RentalRequest(Member& requester, Motorbike& motorbike, const TimePeriod& rentalPeriod); // Create New
-    RentalRequest(Member requester, Motorbike motorbike, 
+    RentalRequest(Member& requester, Motorbike* motorbike, const TimePeriod& rentalPeriod); // Create New
+    RentalRequest(std::string id, Member requester, Motorbike* motorbike, 
                 const TimePeriod rentalPeriod, Review motorbikeReview,
                 Review renterReview, std::string status);
     RentalRequest();
@@ -32,14 +33,18 @@ public:
     Review getMotorbikeReview() const;
     Review getRenterReview() const;
     std::string getStatus() const; // New getter for status
+    std::string getId() const; // New getter for status
 
     // Setter functions
     void setMotorbikeReview(const Review& motorbikeReview);
     void setRenterReview(const Review& renterReview);
     void setStatus(const std::string& newStatus); // New setter for status
+    void setId(const std::string& newId); // New setter for status
 
     bool hasRenterReview() const;
     void displayRequestDetails() const;
+    std::string createAutoIncrementedId(std::string filename);
+
 };
 
 #endif

@@ -1,7 +1,7 @@
 #include <fstream>
 #include <iostream>
 #include <vector>
-#include <limits> 
+#include <limits>
 #include "../include/member.h"
 #include "../include/motorbike.h"
 #include "../include/rentalrequest.h"
@@ -12,86 +12,86 @@
 #include "../include/timeperiod.h"
 #include "../include/account.h"
 
-
 // Constructor to initialize member attributes
-Member::Member(std::string id, std::string username, std::string password, std::string fullName, std::string phoneNumber, 
-                std::string idType, std::string idNumber, std::string driverLicenseNumber, std::string expiryDate)
-    : Account(id, username, password), fullName(fullName), phoneNumber(phoneNumber), idType(idType),
+Member::Member(std::string username, std::string password, std::string fullName, std::string phoneNumber,
+               std::string idType, std::string idNumber, std::string driverLicenseNumber, std::string expiryDate, std::string city)
+    : Account(username, password), fullName(fullName), phoneNumber(phoneNumber), idType(idType),
       idNumber(idNumber), driverLicenseNumber(driverLicenseNumber), expiryDate(expiryDate), creditPoints(20),
-      ratingScores(0), motorbikes(),rentalRequests(), rentedRentalRequests()
+      ratingScores(0), motorbike(), rentalRequests(), rentedRentalRequests(), city(city)
 {
 }
 
 // for existed member
 Member::Member(std::string id, std::string usernameReg, std::string hashedPassword, std::string salt,
-                 std::string fullName, std::string phoneNumber, std::string idType, std::string idNumber, 
-                 std::string driverLicenseNumber, std::string expiryDate, std::string city, int creditPoints,double ratingScores)
+               std::string fullName, std::string phoneNumber, std::string idType, std::string idNumber,
+               std::string driverLicenseNumber, std::string expiryDate, std::string city, int creditPoints, double ratingScores)
     : Account(id, usernameReg, hashedPassword, salt), fullName(fullName), phoneNumber(phoneNumber), idType(idType),
       idNumber(idNumber), driverLicenseNumber(driverLicenseNumber), expiryDate(expiryDate), creditPoints(creditPoints),
-      city(city), motorbikes(), rentalRequests(), rentedRentalRequests(), ratingScores(ratingScores)
+      city(city), motorbike(), rentalRequests(), rentedRentalRequests(), ratingScores(ratingScores)
 {
     // Initialize member-specific data members if needed
 }
 
 Member::Member(){};
 
-
-
-
 // List a motorbike for rent
 void Member::addMotorbike()
 {
     std::string model, color, engineSizeVal, transmissionMode, description, yearMadeVal, minimumRenterRatingVal;
-    std::cout << "Enter Model Name: ";
-    std::cin.ignore(); // Consume newline character
-    std::getline(std::cin, model);
-    std::cout << "Enter color: ";
-    std::cin >> color;
-    std::cout << "Enter Transmission Mode: ";
-    std::cin >> transmissionMode;
-    std::cout << "Enter Description:: ";
+    std::cout << "Enter Model Name: " << std::endl;
     std::cin.ignore();
+    std::getline(std::cin, model);
+    std::cout << "Enter color: " << std::endl;
+    std::getline(std::cin, color);
+    std::cout << "Enter Transmission Mode: " << std::endl;
+    std::getline(std::cin, transmissionMode);
+    std::cout << "Enter Description:: " << std::endl;
     std::getline(std::cin, description);
-    std::cout << "Enter engine size: ";
-    std::cin >> engineSizeVal;
-    std::cout << "Enter year made: ";
-    std::cin >> yearMadeVal;
-   
+    std::cout << "Enter Engine size: " << std::endl;
+    std::getline(std::cin, engineSizeVal);
+    std::cout << "Enter Year made: " << std::endl;
+    std::getline(std::cin, yearMadeVal);
 
-    double engineSize = Method::validateDouble(engineSizeVal);
+    int engineSize = Method::validateNumber(engineSizeVal);
     int yearMade = Method::validateNumber(yearMadeVal);
 
-    Motorbike motorbike(model, color, engineSize, transmissionMode, yearMade,
-                        description, this);
-    this->setMotorbikes(motorbike);
+    // Create a new Motorbike object using dynamic allocation (new)
+    Motorbike *newMotorbike = new Motorbike(
+        model, color, engineSize, transmissionMode, yearMade, description, this);
+
+    // Set the member variable to point to the newly allocated Motorbike object
+    this->motorbike = newMotorbike;
 }
 
+// List a motorbike
 void Member::listMotorbike()
 {
-    Motorbike* ptr = this->getMotorbikes();
-
-    Motorbike motorbike = *ptr;
     std::string minimumRenterRatingVal;
     std::string consumingPointsVal;
 
-    if (motorbike.isAvailable())
+    Motorbike *memberMotorbike = this->getMotorbike();
+
+    if (memberMotorbike->getAvailability())
     {
         std::cout << "This motorbike is already listed!" << std::endl;
     }
     else
     {
-        motorbike.setAvailability(true);
+        std::cout << "Listing motorbike:" << std::endl;
+
         std::cout << "Enter consuming points:" << std::endl;
         std::cin >> consumingPointsVal;
         int consumingPoints = Method::validateNumber(consumingPointsVal);
 
-        motorbike.setConsumingPoint(consumingPoints);
+        // Set the consuming points for the member's motorbike
+        memberMotorbike->setConsumingPoint(consumingPoints);
 
         std::cout << "Enter minimum renter rating (enter 0 if you don't want to set rating):" << std::endl;
         std::cin >> minimumRenterRatingVal;
         int minimumRenterRating = Method::validateNumber(minimumRenterRatingVal);
 
-        motorbike.setMinimumRenterRating(minimumRenterRating);
+        // Set the minimum renter rating for the member's motorbike
+        memberMotorbike->setMinimumRenterRating(minimumRenterRating);
 
         DateTime startDate, endDate;
         bool validPeriod = false;
@@ -137,28 +137,37 @@ void Member::listMotorbike()
         // Create a TimePeriod object from the start and end dates
         TimePeriod period(startDate, endDate);
 
-        // Set the rental period for the motorbike
-        motorbike.setRentalDetails(period);
+        // Set the rental period for the member's motorbike
+        memberMotorbike->setRentalDetails(period);
+
+        // Set the motorbike as available
+        memberMotorbike->setAvailability(true);
+
+        // Find and replace the existing member's motorbike in the motorbikes vector
 
         std::cout << "Motorbike listed successfully!" << std::endl;
     }
 }
 
 // Unlist a motorbike
+// Unlist a motorbike
 void Member::unlistMotorbike()
 {
-    Motorbike* ptr = this->getMotorbikes();
-    Motorbike motorbike = *ptr;
-    motorbike.setAvailability(false);
-    motorbike.removeAvailablePeriods();
+    Motorbike *memberMotorbike = this->getMotorbike();
+
+    // Set the availability of the member's motorbike to false
+    memberMotorbike->setAvailability(false);
+
+    // Find and replace the existing member's motorbike in the motorbikes vector
+
     std::cout << "Motorbike unlisted!" << std::endl;
 }
 
 // Request to rent a motorbike
-bool Member::requestToRentMotorbike(Motorbike &motorbike, TimePeriod period)
+bool Member::requestToRentMotorbike(Motorbike *motorbike, TimePeriod period)
 {
     // Check if the motorbike is available for the specified rental period
-    if (!motorbike.isAvailable() || !motorbike.periodIsValid(period))
+    if (!motorbike->isAvailable() || !motorbike->periodIsValid(period))
     {
         std::cout << "Motorbike is not available for the specified rental period or the period is invalid." << std::endl;
         return false;
@@ -167,8 +176,8 @@ bool Member::requestToRentMotorbike(Motorbike &motorbike, TimePeriod period)
     // Create a rental request
     RentalRequest request(*this, motorbike, period);
 
-    // Send the rental request to the motorbike owner
-    motorbike.getOwner()->receiveRentalRequest(request);
+    //  the rental request to the motorbike owner
+    motorbike->getOwner()->receiveRentalRequest(request);
 
     // Add the rental request to the member's list of rental requests
     rentedRentalRequests.push_back(request);
@@ -193,14 +202,13 @@ void Member::receiveRentalRequest(const RentalRequest &request)
     else
     {
         // Handle the case where the request is not for a motorbike owned by this member
-        std::cout << "This rental request is not for one of his/her motorbikes." << std::endl;
+        std::cout << "This rental request is not for one of his/her motorbike." << std::endl;
     }
 }
 
 // View rental requests (1 or 2)
 void Member::viewRequests(std::string type)
 {
-    std::cout << "Rental Requests:" << std::endl;
     int index = 1; // Initialize an index counter
 
     if (type == "1")
@@ -212,6 +220,7 @@ void Member::viewRequests(std::string type)
         }
         else
         {
+            std::cout << "Rental Requests:" << std::endl;
 
             // Print all rental requests
             for (const RentalRequest &request : rentalRequests)
@@ -225,8 +234,8 @@ void Member::viewRequests(std::string type)
                 std::cout << "End Date: " << period.getEndDate().toString() << std::endl;
                 std::cout << "Status: " << request.getStatus() << std::endl;
                 std::cout << "----------------------" << std::endl;
+                index++;
             }
-            index++;
         }
     }
     else if (type == "2")
@@ -238,6 +247,7 @@ void Member::viewRequests(std::string type)
         }
         else
         {
+            std::cout << "Rented rental Requests:" << std::endl;
             // Print only rented rental requests
             for (const RentalRequest &request : rentedRentalRequests)
             {
@@ -252,8 +262,8 @@ void Member::viewRequests(std::string type)
                     std::cout << "End Date: " << period.getEndDate().toString() << std::endl;
                     std::cout << "Status: " << request.getStatus() << std::endl;
                     std::cout << "----------------------" << std::endl;
+                    index++;
                 }
-                index++;
             }
         }
     }
@@ -401,7 +411,6 @@ void Member::editMemberRatingScore()
     }
 }
 
-
 // Top up credit points
 void Member::topUpCreditPoints()
 {
@@ -452,8 +461,6 @@ void Member::viewUnscoredRequests(bool showRentedRequests)
     }
 }
 
-
-
 // View member information
 void Member::viewMemberInfo()
 {
@@ -465,17 +472,26 @@ void Member::viewMemberInfo()
     std::cout << "ID Number: " << getIdNumber() << std::endl;
     std::cout << "Driver's License Number: " << getDriverLicenseNumber() << std::endl;
     std::cout << "Expiry Date: " << getExpiryDate() << std::endl;
+    std::cout << "City: " << getCity() << std::endl;
     std::cout << "Credit Points: " << getCreditPoints() << std::endl;
     std::cout << "Rating Scores: " << getRatingScores() << std::endl;
 
     // You can add more member details here if needed
 
-    std::cout << "----------------------" << std::endl;
-}
+    if (getMotorbike())
+    {
 
-std::string Member::getId() const
-{
-    return id;
+        Motorbike *mtb = this->getMotorbike();
+        std::cout << std::endl
+                  << "Motorbike details:" << std::endl;
+        std::cout << mtb->getMotorbikeDetails() << std::endl;
+    }
+    else
+    {
+        std::cout << " None" << std::endl;
+    }
+
+    std::cout << "----------------------" << std::endl;
 }
 
 std::string Member::getFullName() const
@@ -513,9 +529,9 @@ int Member::getCreditPoints() const
     return creditPoints;
 }
 
-Motorbike* Member::getMotorbikes() const
+Motorbike *Member::getMotorbike() const
 {
-    return motorbikes;
+    return motorbike;
 }
 
 double Member::getRatingScores() const
@@ -574,9 +590,12 @@ void Member::setCreditPoints(int newCreditPoints)
     creditPoints = newCreditPoints;
 }
 
-void Member::setMotorbikes(Motorbike newMotorbike)
+void Member::setMotorbike(Motorbike &newMotorbike)
 {
-    motorbikes = &newMotorbike;
+    Motorbike *motorbikePtr = new Motorbike(newMotorbike);
+
+    motorbike = motorbikePtr;
+
     std::cout << "Motorbike added!" << std::endl;
 }
 
@@ -615,21 +634,50 @@ void Member::setCity(std::string city)
     this->city = city;
 };
 
-void Member::acceptRequest(RentalRequest request)
+void Member::changeRequestStatusById(std::string requestId, const std::string &newStatus)
 {
-    // Loop through the rental requests of the member
-    for (RentalRequest &otherRequest : rentalRequests)
+
+    for (RentalRequest &request : this->getRentedRentalRequests())
     {
-        // Check if the current request's time period overlaps with the other request's time period
-        if (request.getRentalPeriod().overlapsWith(otherRequest.getRentalPeriod()))
+        if (request.getId() == requestId)
         {
-            // If there is an overlap, set the other request's status to denied
-            otherRequest.setStatus("Denied");
+            // Found the request with the given ID, update its status
+            request.setStatus(newStatus);
+            return; // Exit the function after updating the status
         }
     }
+}
 
-    // After checking all requests, set the current request's status to accepted
-    request.setStatus("Accepted");
+std::vector<RentalRequest> Member::acceptRequest(RentalRequest *currentRequest)
+{
+    std::vector<RentalRequest> newRentalRequests;
+
+    // Loop through the rental requests of the member
+    for (RentalRequest &request : rentalRequests)
+    {
+        // Check if the current request's time period overlaps with the other request's time period
+        if (currentRequest->getId() == request.getId())
+        {
+            request.setStatus("Accepted");
+            request.getRequester().changeRequestStatusById(currentRequest->getId(), "Accepted");
+            newRentalRequests.push_back(request);
+        }
+        else if (currentRequest->getRentalPeriod().overlapsWith(request.getRentalPeriod()))
+        {
+            // If there is an overlap and the requests are not the same, set the other request's status to denied
+            request.setStatus("Denied");
+            request.getRequester().changeRequestStatusById(currentRequest->getId(), "Denied");
+
+            newRentalRequests.push_back(request); // Add the denied request to the vector
+        }
+        else
+        {
+            newRentalRequests.push_back(request); // Add the denied request to the vector
+        }
+
+        // After checking all requests, set the current request's status to accepted
+    }
+    return newRentalRequests; // Return the vector of denied requests
 }
 
 // In the Member class
@@ -647,7 +695,7 @@ void Member::RentRequestedMotorbike()
     std::cin >> selectedIndex;
 
     // Check if the selected index is valid
-    if (selectedIndex >= 1 && (selectedIndex -1) <= rentedRentalRequests.size())
+    if (selectedIndex >= 1 && (selectedIndex - 1) <= rentedRentalRequests.size())
     {
         // Step 3: Prompt the member to rate the rented motorbike
         RentalRequest &selectedRequest = rentedRentalRequests[selectedIndex - 1];
@@ -701,8 +749,8 @@ void Member::RateRenter()
             unratedRentalIndices.push_back(i);
             std::cout << index << ". ";
             rentalRequests[i].displayRequestDetails(); // Implement this function in RentalRequest class
-            ++index;
         }
+        ++index;
     }
 
     // Step 2: Check if there are unrated rental requests

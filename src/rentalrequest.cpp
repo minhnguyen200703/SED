@@ -1,12 +1,15 @@
 #include "../include/rentalrequest.h"
+#include <fstream> // Include the necessary header
+#include <sstream> // Include the <sstream> header
+
 
 // Constructors
-RentalRequest::RentalRequest(Member& requester, Motorbike& motorbike, const TimePeriod& rentalPeriod)
-    : requester(&requester), motorbike(&motorbike), rentalPeriod(rentalPeriod), status("Pending") {}
+RentalRequest::RentalRequest(Member& requester, Motorbike* motorbike, const TimePeriod& rentalPeriod)
+    : id(createAutoIncrementedId("./data/RentalRequest.txt")), requester(&requester), motorbike(motorbike), rentalPeriod(rentalPeriod), status("Pending") {}
 
 
-RentalRequest::RentalRequest(Member requester, Motorbike motorbike, const TimePeriod rentalPeriod, Review motorbikeReview, Review renterReview, std::string status)
-    : requester(&requester), motorbike(&motorbike), rentalPeriod(rentalPeriod), motorbikeReview(motorbikeReview), renterReview(renterReview), status(status) {}
+RentalRequest::RentalRequest(std::string id, Member requester, Motorbike* motorbike, const TimePeriod rentalPeriod, Review motorbikeReview, Review renterReview, std::string status)
+    : id(id), requester(&requester), motorbike(motorbike), rentalPeriod(rentalPeriod), motorbikeReview(motorbikeReview), renterReview(renterReview), status(status) {}
 
     RentalRequest::RentalRequest() {};
 
@@ -34,6 +37,14 @@ Review RentalRequest::getRenterReview() const {
 std::string RentalRequest::getStatus() const {
     return status;
 }
+std::string RentalRequest::getId() const {
+    return id;
+}; // New getter for status
+
+void RentalRequest::setId(const std::string& newId) {
+    this->id = newId;
+}; // New setter for status
+
 
 // Setter functions
 void RentalRequest::setMotorbikeReview(const Review& motorbikeReview) {
@@ -81,4 +92,28 @@ void RentalRequest::displayRequestDetails() const
     {
         std::cout << "No renter review available." << std::endl;
     }
+}
+
+std::string RentalRequest::createAutoIncrementedId(std::string filename) {
+    int maxId = 0;
+        std::ifstream file(filename);
+        if (file.is_open()) {
+            std::string line;
+            while (std::getline(file, line)) {
+                std::istringstream iss(line);
+                std::string id;
+                if (std::getline(iss, id, '|')) {
+                    int accountId = std::stoi(id);
+                    maxId = std::max(maxId, accountId);
+                }
+            }
+            file.close();
+        } else {
+            std::cerr << "Failed to open file: " << filename << std::endl;
+            return 0;
+        }
+
+        // Generate the new account's ID
+        int newId = maxId + 1;
+        return std::to_string(newId);
 }
